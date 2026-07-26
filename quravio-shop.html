@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quravio — Shop All Products</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A84C;--gold2:#E8C96A;--gold3:#8A6218;
+  --navy:#1B2A4A;--navy2:#0F1E36;--navy3:#2E4070;
+  --white:#fff;--off:#F7F5F1;--border:rgba(0,0,0,0.1);
+  --t1:#111;--t2:#333;--t3:#555;--t4:#888;
+  --red:#D93025;--green:#1A7A4A;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--t1);overflow-x:hidden}
+.gold-text{background:linear-gradient(90deg,var(--gold3),var(--gold2),var(--gold),var(--gold2),var(--gold3));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gs 4s linear infinite}
+@keyframes gs{to{background-position:200% center}}
+
+/* TOPBAR */
+.topbar{background:var(--navy2);padding:8px 0;text-align:center;font-size:0.72rem;letter-spacing:0.12em;color:rgba(255,255,255,0.75)}
+.topbar strong{color:var(--gold2)}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:990;background:#fff;border-bottom:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.nav-inner{max-width:1400px;margin:0 auto;padding:0 2rem;height:68px;display:flex;align-items:center;gap:2rem}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:600;letter-spacing:0.1em;text-decoration:none;flex-shrink:0}
+.nav-cats{display:flex;gap:0;flex:1;justify-content:center}
+.nav-cats a{padding:0 1.1rem;height:68px;display:flex;align-items:center;font-size:0.78rem;font-weight:500;letter-spacing:0.06em;color:var(--t2);text-decoration:none;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
+.nav-cats a:hover,.nav-cats a.active{color:var(--t1);border-color:var(--gold)}
+.nav-right{display:flex;align-items:center;gap:0.5rem;flex-shrink:0}
+.search-box{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:2px;overflow:hidden;height:36px}
+.search-box input{border:none;outline:none;padding:0 12px;font-size:0.8rem;font-family:'DM Sans',sans-serif;width:200px;color:var(--t1);background:transparent}
+.search-box input::placeholder{color:var(--t4)}
+.search-box button{background:var(--navy);border:none;width:36px;height:36px;cursor:pointer;color:#fff;font-size:1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.icon-btn{background:none;border:none;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;color:var(--t2);position:relative;transition:color .2s;border-radius:2px}
+.icon-btn:hover{color:var(--navy);background:var(--off)}
+.cart-count{position:absolute;top:5px;right:5px;background:var(--navy);color:#fff;font-size:0.58rem;font-weight:600;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+
+/* HERO */
+.hero{background:var(--navy2);padding:60px 2rem;text-align:center}
+.hero-label{font-size:0.68rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold2);margin-bottom:12px;font-weight:500}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3.5rem);font-weight:400;color:#fff;line-height:1.2;margin-bottom:12px}
+.hero-title em{font-style:italic;color:var(--gold2)}
+.hero-sub{font-size:0.88rem;color:rgba(255,255,255,0.6);max-width:500px;margin:0 auto}
+
+/* PROMO STRIP */
+.promo-strip{background:var(--off);border-bottom:1px solid var(--border)}
+.promo-strip-inner{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.promo-item{display:flex;align-items:center;gap:12px;padding:14px 20px;border-right:1px solid var(--border)}
+.promo-item:last-child{border-right:none}
+.promo-icon{width:36px;height:36px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0}
+.promo-text strong{display:block;font-size:0.78rem;font-weight:600;color:var(--t1);margin-bottom:1px}
+.promo-text span{font-size:0.7rem;color:var(--t3)}
+
+/* CATEGORY TABS */
+.cat-strip{background:#fff;border-bottom:2px solid var(--border);overflow-x:auto}
+.cat-strip::-webkit-scrollbar{height:3px}
+.cat-strip::-webkit-scrollbar-thumb{background:var(--gold)}
+.cat-inner{max-width:1400px;margin:0 auto;padding:0 2rem;display:flex;gap:0;min-width:max-content}
+.cat-tab{display:flex;align-items:center;gap:8px;padding:16px 20px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;text-decoration:none;flex-shrink:0;font-size:0.8rem;font-weight:500;color:var(--t2)}
+.cat-tab:hover{border-color:rgba(201,168,76,0.4);color:var(--t1)}
+.cat-tab.active{border-color:var(--gold);color:var(--gold3);font-weight:600}
+.cat-tab .cico{font-size:1.2rem}
+
+/* FILTER BAR */
+.filter-bar{background:var(--off);border-bottom:1px solid var(--border);padding:12px 0;position:sticky;top:68px;z-index:50}
+.filter-bar-inner{max-width:1400px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.filter-right{display:flex;align-items:center;gap:12px}
+.result-info{font-size:0.75rem;color:var(--t3);white-space:nowrap}
+.result-info strong{color:var(--t1);font-weight:600}
+.sort-sel{border:1.5px solid var(--border);outline:none;padding:7px 32px 7px 12px;font-size:0.75rem;font-family:'DM Sans',sans-serif;color:var(--t1);background:#fff;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23333'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.srch-bar{border:1.5px solid var(--border);outline:none;padding:7px 14px;font-size:0.8rem;font-family:'DM Sans',sans-serif;color:var(--t1);background:#fff;width:220px}
+.srch-bar:focus{border-color:var(--gold)}
+.view-btns{display:flex;gap:4px}
+.vbtn{width:32px;height:32px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;color:var(--t3);transition:all .2s}
+.vbtn.active,.vbtn:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+/* PRODUCTS GRID */
+.products-wrap{max-width:1400px;margin:0 auto;padding:2rem}
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+.pgrid.g3{grid-template-columns:repeat(3,1fr)}
+.pgrid.glist{grid-template-columns:1fr;gap:1rem}
+
+/* PRODUCT CARD */
+.pc{cursor:pointer;position:relative;animation:fi .4s both}
+@keyframes fi{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.pc-img{position:relative;overflow:hidden;aspect-ratio:3/4;margin-bottom:.9rem;background:var(--off);border:1px solid var(--border)}
+.pgrid.glist .pc{display:grid;grid-template-columns:200px 1fr;gap:1.5rem;align-items:start;border:1px solid var(--border);padding:1rem;background:#fff}
+.pgrid.glist .pc-img{margin-bottom:0;aspect-ratio:1}
+.pc-img-el{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.25,.46,.45,.94);display:block}
+.pc-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;background:linear-gradient(135deg,var(--navy),var(--navy3));color:rgba(255,255,255,0.3)}
+.pc:hover .pc-img-el,.pc:hover .pc-img-placeholder{transform:scale(1.06)}
+.pc-badge{position:absolute;top:10px;left:10px;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;z-index:2}
+.badge-sale{background:var(--red);color:#fff}
+.badge-new{background:var(--navy);color:var(--gold2)}
+.badge-feat{background:var(--gold3);color:#fff}
+.pc-wish{position:absolute;top:10px;right:10px;z-index:2;width:34px;height:34px;background:rgba(255,255,255,0.9);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;color:var(--t4);opacity:0;transition:all .2s}
+.pc:hover .pc-wish{opacity:1}
+.pc-wish.liked{opacity:1;color:var(--red)}
+.pc-overlay{position:absolute;bottom:-48px;left:0;right:0;display:flex;gap:1px;transition:bottom .3s;z-index:3}
+.pc:hover .pc-overlay{bottom:0}
+.pgrid.glist .pc-overlay{display:none}
+.ov-btn{flex:1;background:rgba(27,42,74,0.92);color:#fff;border:none;cursor:pointer;padding:11px 6px;font-size:0.65rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;font-family:'DM Sans',sans-serif;transition:background .2s}
+.ov-btn:hover{background:var(--gold3)}
+.pc-cat{font-size:0.65rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--t4);margin-bottom:5px}
+.pc-name{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--t1);margin-bottom:6px;line-height:1.3}
+.pgrid.glist .pc-name{font-size:1.2rem}
+.pc-desc{display:none;font-size:0.78rem;color:var(--t3);line-height:1.6;margin-bottom:10px}
+.pgrid.glist .pc-desc{display:block}
+.pc-price{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.p-now{font-size:1rem;font-weight:700;color:var(--t1)}
+.p-was{font-size:0.82rem;color:var(--t4);text-decoration:line-through}
+.p-off{font-size:0.65rem;font-weight:700;color:var(--red)}
+.pc-actions-list{display:none;gap:10px;margin-top:1.2rem}
+.pgrid.glist .pc-actions-list{display:flex}
+.abtn{padding:10px 22px;font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;border:none;cursor:pointer;transition:all .2s}
+.abtn-p{background:var(--navy);color:#fff}
+.abtn-p:hover{background:var(--navy2)}
+.abtn-o{background:none;border:1.5px solid var(--border);color:var(--t2)}
+.abtn-o:hover{border-color:var(--navy);color:var(--navy)}
+
+/* EMPTY / LOADING */
+.state-box{grid-column:1/-1;text-align:center;padding:5rem 2rem}
+.state-icon{font-size:4rem;margin-bottom:1rem}
+.state-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--navy);margin-bottom:8px}
+.state-sub{font-size:0.85rem;color:var(--t4);margin-bottom:1.5rem}
+.spin{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spn .7s linear infinite;margin:0 auto}
+@keyframes spn{to{transform:rotate(360deg)}}
+
+/* CART DRAWER */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:1000;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.on{opacity:1;pointer-events:all}
+.cart-d{position:fixed;top:0;right:-460px;bottom:0;width:460px;background:#fff;z-index:1001;transition:right .4s cubic-bezier(.25,.46,.45,.94);display:flex;flex-direction:column;box-shadow:-4px 0 30px rgba(0,0,0,0.12)}
+.cart-d.on{right:0}
+.cd-head{padding:1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.cd-head h2{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400}
+.cd-close{background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--t3);width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .2s}
+.cd-close:hover{background:var(--off)}
+.cd-items{flex:1;overflow-y:auto;padding:1rem 1.5rem}
+.cd-empty-state{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;color:var(--t4);text-align:center}
+.ci{display:flex;gap:1rem;padding:1rem 0;border-bottom:1px solid var(--border)}
+.ci-img{width:76px;height:96px;object-fit:cover;flex-shrink:0;border:1px solid var(--border);background:var(--off);display:flex;align-items:center;justify-content:center;font-size:1.8rem}
+.ci-info{flex:1}
+.ci-name{font-size:0.9rem;font-weight:500;color:var(--t1);margin-bottom:4px;line-height:1.3}
+.ci-price{font-size:0.85rem;font-weight:700;color:var(--t1);margin-bottom:8px}
+.ci-row{display:flex;align-items:center;gap:12px}
+.qty-wrap{display:flex;align-items:center;border:1.5px solid var(--border)}
+.qb{width:28px;height:28px;border:none;background:none;cursor:pointer;font-size:1rem;color:var(--t2);display:flex;align-items:center;justify-content:center;transition:all .2s}
+.qb:hover{background:var(--navy);color:#fff}
+.qn{width:28px;text-align:center;font-size:0.82rem;font-weight:600}
+.ci-rm{background:none;border:none;cursor:pointer;font-size:0.68rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--t4);transition:color .2s}
+.ci-rm:hover{color:var(--red)}
+.cd-foot{padding:1.25rem 1.5rem;border-top:1px solid var(--border)}
+.cd-subtotal{display:flex;justify-content:space-between;font-size:0.88rem;font-weight:700;margin-bottom:6px}
+.cd-note{font-size:0.7rem;color:var(--t4);margin-bottom:1.25rem;line-height:1.5}
+.cd-checkout{width:100%;background:var(--navy);color:#fff;border:none;padding:15px;font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:background .2s;margin-bottom:8px}
+.cd-checkout:hover{background:var(--navy2)}
+.cd-cont{width:100%;background:none;border:1.5px solid var(--border);color:var(--t2);padding:12px;font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.cd-cont:hover{border-color:var(--navy);color:var(--navy)}
+
+/* FOOTER */
+footer{background:var(--navy2);padding:4rem 0 2rem;margin-top:4rem}
+.ft-inner{max-width:1400px;margin:0 auto;padding:0 2rem}
+.ft-grid{display:grid;grid-template-columns:2.5fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.ft-brand .logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;letter-spacing:0.1em;display:block;margin-bottom:1rem;text-decoration:none}
+.ft-brand p{font-size:0.78rem;color:rgba(255,255,255,0.5);line-height:1.8;max-width:270px;margin-bottom:1.5rem}
+.ft-socials{display:flex;gap:8px}
+.ft-soc{width:36px;height:36px;border:1px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:0.85rem;color:rgba(255,255,255,0.5);transition:all .2s;font-weight:700}
+.ft-soc:hover{border-color:var(--gold);color:var(--gold2)}
+.ft-col h5{font-size:0.65rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold2);margin-bottom:1.25rem;font-weight:600}
+.ft-col ul{list-style:none}
+.ft-col li{margin-bottom:0.65rem}
+.ft-col a{font-size:0.78rem;color:rgba(255,255,255,0.55);text-decoration:none;transition:color .2s}
+.ft-col a:hover{color:#fff}
+.ft-bot{border-top:1px solid rgba(255,255,255,0.08);padding-top:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.ft-bot p{font-size:0.7rem;color:rgba(255,255,255,0.4)}
+.pay-row{display:flex;gap:8px}
+.pay-badge{background:rgba(255,255,255,0.07);padding:5px 12px;font-size:0.62rem;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase}
+
+/* RESPONSIVE */
+@media(max-width:1100px){.pgrid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){.pgrid{grid-template-columns:repeat(2,1fr)}.nav-cats{display:none}.search-box input{width:140px}.promo-strip-inner{grid-template-columns:1fr 1fr}.ft-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.pgrid{grid-template-columns:repeat(2,1fr);gap:1rem}.products-wrap{padding:1rem}.ft-grid{grid-template-columns:1fr}.cart-d{width:100%;right:-100%}}
+</style>
+</head>
+<body>
+
+<div class="topbar">🚚 <strong>Free worldwide shipping</strong> on all orders &middot; Secure PayPal checkout &middot; 30-day returns</div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo gold-text">Quravio</a>
+    <div class="nav-cats">
+      <a href="index.html">Home</a>
+      <a href="quravio-shop.html" class="active">All Products</a>
+      <a href="quravio-about.html">About</a>
+      <a href="quravio-contact.html">Contact</a>
+    </div>
+    <div class="nav-right">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search products..." oninput="doSearch()">
+        <button>&#128269;</button>
+      </div>
+      <button class="icon-btn" title="Cart" onclick="toggleCart()">
+        &#128722;<span class="cart-count" id="cartBadge">0</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">Luxury Dropshipping Store</div>
+  <h1 class="hero-title">Shop <em>All Products</em></h1>
+  <p class="hero-sub">Curated luxury pieces — all products loaded live from our catalogue</p>
+</div>
+
+<!-- PROMO -->
+<div class="promo-strip">
+  <div class="promo-strip-inner">
+    <div class="promo-item"><div class="promo-icon">&#128666;</div><div class="promo-text"><strong>Free Worldwide Shipping</strong><span>On every order</span></div></div>
+    <div class="promo-item"><div class="promo-icon">&#128274;</div><div class="promo-text"><strong>Secure PayPal</strong><span>Buyer protection</span></div></div>
+    <div class="promo-item"><div class="promo-icon">&#8617;&#65039;</div><div class="promo-text"><strong>30-Day Returns</strong><span>No questions asked</span></div></div>
+    <div class="promo-item"><div class="promo-icon">&#127873;</div><div class="promo-text"><strong>Gift Packaging</strong><span>Every order gift-ready</span></div></div>
+  </div>
+</div>
+
+<!-- CATEGORY TABS -->
+<div class="cat-strip">
+  <div class="cat-inner" id="catTabs">
+    <a class="cat-tab active" onclick="filterCat('',this)"><span class="cico">&#128717;</span>All Products</a>
+    <a class="cat-tab" onclick="filterCat('Women\'s Fashion',this)"><span class="cico">&#128247;</span>Women's Fashion</a>
+    <a class="cat-tab" onclick="filterCat('Men\'s Fashion',this)"><span class="cico">&#128084;</span>Men's Fashion</a>
+    <a class="cat-tab" onclick="filterCat('Accessories',this)"><span class="cico">&#128144;</span>Accessories</a>
+    <a class="cat-tab" onclick="filterCat('Jewellery',this)"><span class="cico">&#128142;</span>Jewellery</a>
+    <a class="cat-tab" onclick="filterCat('Bags &amp; Handbags',this)"><span class="cico">&#128076;</span>Bags</a>
+    <a class="cat-tab" onclick="filterCat('Footwear',this)"><span class="cico">&#128095;</span>Footwear</a>
+    <a class="cat-tab" onclick="filterCat('Home &amp; Living',this)"><span class="cico">&#127968;</span>Home</a>
+    <a class="cat-tab" onclick="filterCat('Beauty',this)"><span class="cico">&#127801;</span>Beauty</a>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="filter-bar-inner">
+    <input class="srch-bar" type="text" id="filterSearch" placeholder="Search products..." oninput="doSearch()"/>
+    <div class="filter-right">
+      <span class="result-info">Showing <strong id="showCount">0</strong> products</span>
+      <select class="sort-sel" onchange="doSort(this.value)">
+        <option value="newest">Newest First</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="name">Name A-Z</option>
+      </select>
+      <div class="view-btns">
+        <button class="vbtn active" onclick="setView(4,this)" title="4 Col">&#8860;</button>
+        <button class="vbtn" onclick="setView(3,this)" title="3 Col">&#8859;</button>
+        <button class="vbtn" onclick="setView('list',this)" title="List">&#9776;</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<div class="products-wrap">
+  <div class="pgrid" id="pgrid">
+    <div class="state-box">
+      <div class="spin"></div>
+      <p style="margin-top:1rem;color:var(--t4);font-size:0.85rem">Loading products from Firebase...</p>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-inner">
+    <div class="ft-grid">
+      <div class="ft-brand">
+        <a href="index.html" class="logo gold-text">Quravio</a>
+        <p>Luxury &middot; Refined &middot; Unique. Curated pieces for those who demand nothing but the extraordinary.</p>
+        <div class="ft-socials">
+          <a class="ft-soc" href="#">in</a>
+          <a class="ft-soc" href="#">ig</a>
+          <a class="ft-soc" href="#">tw</a>
+          <a class="ft-soc" href="#">yt</a>
+        </div>
+      </div>
+      <div class="ft-col"><h5>Shop</h5><ul>
+        <li><a href="quravio-shop.html">All Products</a></li>
+        <li><a href="quravio-about.html">About Us</a></li>
+        <li><a href="quravio-contact.html">Contact</a></li>
+      </ul></div>
+      <div class="ft-col"><h5>Help</h5><ul>
+        <li><a href="#">Track Order</a></li>
+        <li><a href="#">Returns</a></li>
+        <li><a href="#">Shipping Info</a></li>
+        <li><a href="#">FAQ</a></li>
+      </ul></div>
+      <div class="ft-col"><h5>Company</h5><ul>
+        <li><a href="quravio-about.html">About Quravio</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms</a></li>
+      </ul></div>
+    </div>
+    <div class="ft-bot">
+      <p>&copy; 2025 Quravio &mdash; All rights reserved.</p>
+      <div class="pay-row">
+        <span class="pay-badge">PayPal</span>
+        <span class="pay-badge">Visa</span>
+        <span class="pay-badge">Mastercard</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- CART -->
+<div class="overlay" id="ovl" onclick="toggleCart()"></div>
+<div class="cart-d" id="cartD">
+  <div class="cd-head">
+    <h2>Cart <span id="cartCount" style="font-size:0.85rem;color:var(--t4);font-family:'DM Sans',sans-serif">(0)</span></h2>
+    <button class="cd-close" onclick="toggleCart()">&#10005;</button>
+  </div>
+  <div class="cd-items" id="cdItems">
+    <div class="cd-empty-state">
+      <div style="font-size:3rem">&#128722;</div>
+      <p style="font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase">Your cart is empty</p>
+    </div>
+  </div>
+  <div class="cd-foot" id="cdFoot" style="display:none">
+    <div class="cd-subtotal"><span>Subtotal</span><span id="cdTotal">$0.00</span></div>
+    <p class="cd-note">Free shipping &middot; PayPal buyer protection</p>
+    <button class="cd-checkout" onclick="goCheckout()">&#128274; Checkout Securely</button>
+    <button class="cd-cont" onclick="toggleCart()">Continue Shopping</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { getFirestore, collection, getDocs, query, where, orderBy }
+  from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+// ── FIREBASE CONFIG ────────────────────────────────
+const app = initializeApp({
+  apiKey: "AIzaSyAbE76HZVyfiVw0SyHNzpAxRCeb_uLCW7Y",
+  authDomain: "quravio-store.firebaseapp.com",
+  projectId: "quravio-store",
+  storageBucket: "quravio-store.firebasestorage.app",
+  messagingSenderId: "1066738660513",
+  appId: "1:1066738660513:web:c7b54e111802d6fff5ece0"
+});
+const db = getFirestore(app);
+
+// ── STATE ─────────────────────────────────────────
+let allProducts = [];
+let filtered = [];
+let cart = JSON.parse(localStorage.getItem('qcart') || '[]');
+let currentCat = '';
+let liked = new Set();
+
+// ── LOAD PRODUCTS FROM FIREBASE ──────────────────
+async function loadProducts() {
+  try {
+    const snap = await getDocs(
+      query(collection(db, 'products'), where('status', '==', 'active'))
+    );
+    allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    if (allProducts.length === 0) {
+      showEmpty();
+      return;
+    }
+
+    filtered = [...allProducts];
+    renderProducts(filtered);
+  } catch (e) {
+    showError(e.message);
+  }
+}
+
+function showEmpty() {
+  document.getElementById('pgrid').innerHTML = `
+    <div class="state-box">
+      <div class="state-icon">&#128722;</div>
+      <div class="state-title">No Products Yet</div>
+      <p class="state-sub">Products will appear here once added via the admin panel.</p>
+      <a href="quravio-admin.html" style="background:var(--navy);color:#fff;padding:12px 28px;font-size:0.75rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;display:inline-block;margin-top:1rem">Go to Admin Panel</a>
+    </div>`;
+  document.getElementById('showCount').textContent = '0';
+}
+
+function showError(msg) {
+  document.getElementById('pgrid').innerHTML = `
+    <div class="state-box">
+      <div class="state-icon">&#9888;&#65039;</div>
+      <div class="state-title">Connection Error</div>
+      <p class="state-sub">${msg}</p>
+      <button onclick="location.reload()" style="background:var(--gold);color:var(--navy);border:none;padding:12px 28px;font-size:0.75rem;font-weight:600;text-transform:uppercase;cursor:pointer;margin-top:1rem">Retry</button>
+    </div>`;
+}
+
+// ── RENDER PRODUCTS ───────────────────────────────
+function renderProducts(products) {
+  document.getElementById('showCount').textContent = products.length;
+  const g = document.getElementById('pgrid');
+
+  if (!products.length) {
+    g.innerHTML = `
+      <div class="state-box">
+        <div class="state-icon">&#128269;</div>
+        <div class="state-title">No Products Found</div>
+        <p class="state-sub">Try a different search or category.</p>
+        <button onclick="resetFilters()" style="background:var(--navy);color:#fff;border:none;padding:12px 28px;font-size:0.75rem;font-weight:600;text-transform:uppercase;cursor:pointer;margin-top:1rem">Clear Filters</button>
+      </div>`;
+    return;
+  }
+
+  g.innerHTML = products.map((p, i) => {
+    const img = p.images && p.images[0]
+      ? `<img class="pc-img-el" src="${p.images[0]}" alt="${p.name}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=pc-img-placeholder>&#128247;</div>'">`
+      : `<div class="pc-img-placeholder">&#128247;</div>`;
+
+    const badge = p.featured
+      ? `<div class="pc-badge badge-feat">&#11088; Featured</div>`
+      : p.comparePrice
+        ? `<div class="pc-badge badge-sale">SALE</div>`
+        : '';
+
+    const discount = p.comparePrice
+      ? Math.round((1 - p.price / p.comparePrice) * 100)
+      : 0;
+
+    const priceEl = p.comparePrice
+      ? `<span class="p-now">$${Number(p.price).toFixed(2)}</span>
+         <span class="p-was">$${Number(p.comparePrice).toFixed(2)}</span>
+         <span class="p-off">${discount}% off</span>`
+      : `<span class="p-now">$${Number(p.price).toFixed(2)}</span>`;
+
+    const desc = p.description
+      ? p.description.substring(0, 120) + (p.description.length > 120 ? '...' : '')
+      : '';
+
+    return `
+      <div class="pc" style="animation-delay:${i * 0.05}s" onclick="goProduct('${p.id}')">
+        <div class="pc-img">
+          ${img}
+          ${badge}
+          <button class="pc-wish ${liked.has(p.id) ? 'liked' : ''}"
+            onclick="event.stopPropagation();toggleLike('${p.id}',this)">
+            ${liked.has(p.id) ? '&#10084;&#65039;' : '&#129293;'}
+          </button>
+          <div class="pc-overlay">
+            <button class="ov-btn" onclick="event.stopPropagation();addToCart('${p.id}')">
+              Add to Cart
+            </button>
+            <button class="ov-btn" style="flex:0 0 44px"
+              onclick="event.stopPropagation();goProduct('${p.id}')" title="View">
+              &#128065;
+            </button>
+          </div>
+        </div>
+        <div class="pc-cat">${p.category || 'Luxury'}</div>
+        <div class="pc-name">${p.name}</div>
+        <p class="pc-desc">${desc}</p>
+        <div class="pc-price">${priceEl}</div>
+        <div class="pc-actions-list">
+          <button class="abtn abtn-p" onclick="event.stopPropagation();addToCart('${p.id}')">Add to Cart</button>
+          <button class="abtn abtn-o" onclick="event.stopPropagation();goProduct('${p.id}')">View Details</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── NAVIGATION ────────────────────────────────────
+window.goProduct = function(id) {
+  localStorage.setItem('qproduct', id);
+  window.location.href = 'quravio-product.html';
+};
+
+// ── FILTERS ───────────────────────────────────────
+window.filterCat = function(cat, el) {
+  event.preventDefault();
+  currentCat = cat;
+  document.querySelectorAll('.cat-tab').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+};
+
+window.doSearch = function() {
+  applyFilters();
+};
+
+window.doSort = function(val) {
+  let r = [...filtered];
+  if (val === 'price-asc') r.sort((a, b) => a.price - b.price);
+  else if (val === 'price-desc') r.sort((a, b) => b.price - a.price);
+  else if (val === 'name') r.sort((a, b) => a.name.localeCompare(b.name));
+  renderProducts(r);
+};
+
+function applyFilters() {
+  const q = (document.getElementById('filterSearch').value ||
+             document.getElementById('searchInput').value).toLowerCase();
+  let r = allProducts;
+  if (currentCat) r = r.filter(p => p.category === currentCat);
+  if (q) r = r.filter(p =>
+    p.name?.toLowerCase().includes(q) ||
+    p.category?.toLowerCase().includes(q) ||
+    p.description?.toLowerCase().includes(q) ||
+    (p.tags || []).some(t => t.toLowerCase().includes(q))
+  );
+  filtered = r;
+  renderProducts(r);
+}
+
+window.resetFilters = function() {
+  currentCat = '';
+  document.getElementById('filterSearch').value = '';
+  document.getElementById('searchInput').value = '';
+  document.querySelectorAll('.cat-tab').forEach((e, i) => e.classList.toggle('active', i === 0));
+  filtered = [...allProducts];
+  renderProducts(filtered);
+};
+
+window.setView = function(n, btn) {
+  document.querySelectorAll('.vbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const g = document.getElementById('pgrid');
+  g.className = 'pgrid';
+  if (n === 3) g.classList.add('g3');
+  if (n === 'list') g.classList.add('glist');
+};
+
+window.toggleLike = function(id, btn) {
+  if (liked.has(id)) {
+    liked.delete(id);
+    btn.innerHTML = '&#129293;';
+    btn.classList.remove('liked');
+  } else {
+    liked.add(id);
+    btn.innerHTML = '&#10084;&#65039;';
+    btn.classList.add('liked');
+  }
+};
+
+// ── CART ──────────────────────────────────────────
+window.addToCart = function(id) {
+  const p = allProducts.find(x => x.id === id);
+  if (!p) return;
+  const ex = cart.find(x => x.id === id);
+  if (ex) ex.qty++;
+  else cart.push({
+    id: p.id,
+    name: p.name,
+    price: p.price,
+    image: p.images && p.images[0] ? p.images[0] : null,
+    qty: 1
+  });
+  saveCart();
+  renderCart();
+  toggleCart();
+};
+
+function saveCart() {
+  localStorage.setItem('qcart', JSON.stringify(cart));
+}
+
+function renderCart() {
+  const count = cart.reduce((s, i) => s + i.qty, 0);
+  document.getElementById('cartBadge').textContent = count;
+  document.getElementById('cartCount').textContent = `(${count})`;
+  const body = document.getElementById('cdItems');
+  const foot = document.getElementById('cdFoot');
+
+  if (!cart.length) {
+    body.innerHTML = `<div class="cd-empty-state">
+      <div style="font-size:3rem">&#128722;</div>
+      <p style="font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase">Your cart is empty</p>
+    </div>`;
+    foot.style.display = 'none';
+    return;
+  }
+
+  body.innerHTML = cart.map(i => `
+    <div class="ci">
+      <div class="ci-img">
+        ${i.image ? `<img src="${i.image}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='&#128247;'">` : '&#128247;'}
+      </div>
+      <div class="ci-info">
+        <div class="ci-name">${i.name}</div>
+        <div class="ci-price">$${(i.price * i.qty).toFixed(2)}</div>
+        <div class="ci-row">
+          <div class="qty-wrap">
+            <button class="qb" onclick="qtyChange('${i.id}',-1)">&#8722;</button>
+            <span class="qn">${i.qty}</span>
+            <button class="qb" onclick="qtyChange('${i.id}',1)">+</button>
+          </div>
+          <button class="ci-rm" onclick="removeCart('${i.id}')">Remove</button>
+        </div>
+      </div>
+    </div>`).join('');
+
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  document.getElementById('cdTotal').textContent = '$' + total.toFixed(2);
+  foot.style.display = 'block';
+}
+
+window.qtyChange = function(id, d) {
+  const it = cart.find(x => x.id === id);
+  if (!it) return;
+  it.qty += d;
+  if (it.qty < 1) cart = cart.filter(x => x.id !== id);
+  saveCart();
+  renderCart();
+};
+
+window.removeCart = function(id) {
+  cart = cart.filter(x => x.id !== id);
+  saveCart();
+  renderCart();
+};
+
+window.toggleCart = function() {
+  document.getElementById('cartD').classList.toggle('on');
+  document.getElementById('ovl').classList.toggle('on');
+};
+
+window.goCheckout = function() {
+  window.location.href = 'quravio-checkout.html';
+};
+
+// ── INIT ──────────────────────────────────────────
+renderCart();
+loadProducts();
+</script>
+</body>
+</html>
