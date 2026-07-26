@@ -579,29 +579,23 @@ quravio-admin.html</div>
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Anyone can read active products
     match /products/{id} {
-      allow read: if true;
-      allow write: if false;
+      allow read, write: if true;
     }
 
-    // Anyone can create an order (checkout)
     match /orders/{id} {
       allow create: if true;
       allow read, update, delete: if false;
     }
 
-    // Anyone can create a customer record
     match /customers/{id} {
       allow create: if true;
       allow read, update, delete: if false;
     }
 
-    // Settings locked - only via admin
     match /settings/{id} {
-      allow read, write: if false;
+      allow read, write: if true;
     }
-
   }
 }</div>
       </div>
