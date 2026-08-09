@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quravio — Contact Us</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A84C;--gold2:#E8C96A;--gold3:#8A6218;
+  --navy:#1B2A4A;--navy2:#0F1E36;--navy3:#243460;
+  --white:#fff;--off:#F7F5F1;--off2:#F0EDE6;
+  --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.07);
+  --t1:#111;--t2:#2a2a2a;--t3:#444;--t4:#777;
+  --green:#1A7A4A;--green2:#eaf4ee;--red:#D93025;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:#fff;color:var(--t1);overflow-x:hidden}
+.gold-text{background:linear-gradient(90deg,var(--gold3),var(--gold2),var(--gold),var(--gold2),var(--gold3));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gs 4s linear infinite}
+@keyframes gs{to{background-position:200% center}}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .65s ease,transform .65s ease}
+.reveal.visible{opacity:1;transform:none}
+.reveal-l{opacity:0;transform:translateX(-30px);transition:opacity .65s ease,transform .65s ease}
+.reveal-l.visible{opacity:1;transform:none}
+.reveal-r{opacity:0;transform:translateX(30px);transition:opacity .65s ease,transform .65s ease}
+.reveal-r.visible{opacity:1;transform:none}
+
+/* TOPBAR */
+.topbar{background:var(--navy2);padding:8px 0;text-align:center;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.7)}
+.topbar strong{color:var(--gold2)}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:990;background:#fff;border-bottom:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.nav-inner{max-width:1400px;margin:0 auto;padding:0 2rem;height:68px;display:flex;align-items:center;gap:2rem}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:600;letter-spacing:0.1em;text-decoration:none;flex-shrink:0}
+.nav-cats{display:flex;gap:0;flex:1;justify-content:center}
+.nav-cats a{padding:0 1.1rem;height:68px;display:flex;align-items:center;font-size:0.78rem;font-weight:500;color:var(--t2);text-decoration:none;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;letter-spacing:0.04em}
+.nav-cats a:hover,.nav-cats a.active{color:var(--t1);border-color:var(--gold)}
+.nav-right{display:flex;align-items:center;gap:.5rem;flex-shrink:0}
+.icon-btn{background:none;border:none;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;color:var(--t2);position:relative;transition:color .2s;border-radius:2px}
+.icon-btn:hover{color:var(--navy);background:var(--off)}
+.cart-count{position:absolute;top:5px;right:5px;background:var(--navy);color:#fff;font-size:0.58rem;font-weight:600;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.search-box{display:flex;align-items:center;border:1.5px solid var(--border);height:36px;overflow:hidden}
+.search-box input{border:none;outline:none;padding:0 12px;font-size:0.8rem;font-family:'DM Sans',sans-serif;width:180px;color:var(--t1);background:transparent}
+.search-box input::placeholder{color:var(--t4)}
+.search-box button{background:var(--navy);border:none;width:36px;height:36px;cursor:pointer;color:#fff;font-size:.9rem;display:flex;align-items:center;justify-content:center}
+
+/* PAGE HERO */
+.page-hero{background:var(--navy2);padding:5rem 0 4rem;position:relative;overflow:hidden}
+.ph-bg{position:absolute;inset:0;opacity:0.03}
+.ph-bg svg{width:100%;height:100%}
+.ph-gold-line{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent)}
+.ph-inner{max-width:1400px;margin:0 auto;padding:0 2rem;position:relative;z-index:2;text-align:center}
+.ph-eyebrow{font-size:0.65rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold2);margin-bottom:1.25rem;font-weight:500;display:flex;align-items:center;justify-content:center;gap:12px}
+.ph-eyebrow::before,.ph-eyebrow::after{content:'';width:30px;height:1px;background:var(--gold)}
+.ph-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.5rem,5vw,4.5rem);font-weight:300;color:#fff;line-height:1.1;margin-bottom:1.25rem}
+.ph-title em{font-style:italic;color:var(--gold2)}
+.ph-sub{font-size:0.92rem;color:rgba(255,255,255,0.6);max-width:480px;margin:0 auto;line-height:1.8;font-weight:300}
+.breadcrumb{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:2rem}
+.breadcrumb a,.breadcrumb span{font-size:0.7rem;letter-spacing:0.1em;color:rgba(255,255,255,0.4);text-decoration:none;transition:color .2s}
+.breadcrumb a:hover{color:var(--gold2)}
+.breadcrumb .cur{color:var(--gold2)}
+.breadcrumb .sep{color:rgba(255,255,255,0.2)}
+
+/* QUICK CONTACT CARDS */
+.qc-section{background:var(--off);border-bottom:1px solid var(--border)}
+.qc-inner{max-width:1400px;margin:0 auto;padding:3rem 2rem;display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+.qc-card{background:#fff;border:1px solid var(--border);padding:2rem 1.5rem;text-align:center;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;text-decoration:none;display:block}
+.qc-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--gold);transform:scaleX(0);transition:transform .3s;transform-origin:center}
+.qc-card:hover{box-shadow:0 8px 32px rgba(0,0,0,0.1);transform:translateY(-3px)}
+.qc-card:hover::after{transform:scaleX(1)}
+.qc-icon{font-size:2.2rem;margin-bottom:1rem;display:block}
+.qc-title{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:400;color:var(--t1);margin-bottom:6px}
+.qc-value{font-size:0.82rem;color:var(--navy);font-weight:600;margin-bottom:4px;letter-spacing:0.02em}
+.qc-note{font-size:0.7rem;color:var(--t4)}
+.qc-badge{position:absolute;top:12px;right:12px;background:var(--green);color:#fff;font-size:0.58rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:3px 8px}
+
+/* MAIN SECTION */
+.main-section{max-width:1400px;margin:0 auto;padding:3rem 2rem;display:grid;grid-template-columns:1fr 420px;gap:3rem;align-items:start}
+
+/* CONTACT FORM */
+.form-panel{background:#fff;border:1px solid var(--border)}
+.fp-head{background:var(--navy);padding:1.75rem 2rem;border-bottom:1px solid rgba(255,255,255,0.08)}
+.fp-head h2{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;color:#fff;margin-bottom:4px}
+.fp-head p{font-size:0.75rem;color:rgba(255,255,255,0.55);letter-spacing:0.04em}
+.fp-body{padding:2rem}
+.topic-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:2rem}
+.topic-tab{padding:10px 8px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:0.7rem;font-weight:600;letter-spacing:0.06em;text-align:center;color:var(--t3);transition:all .2s;font-family:'DM Sans',sans-serif;display:flex;flex-direction:column;align-items:center;gap:5px}
+.topic-tab .tt-icon{font-size:1.2rem}
+.topic-tab:hover{border-color:var(--navy);color:var(--navy)}
+.topic-tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg.full{grid-column:1/-1}
+.fg label{font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--t2)}
+.fg input,.fg select,.fg textarea{border:1.5px solid var(--border);padding:11px 14px;font-size:0.85rem;font-family:'DM Sans',sans-serif;color:var(--t1);outline:none;transition:border-color .2s;background:#fff}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--navy)}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--t4)}
+.fg select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23333'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer}
+.fg textarea{resize:vertical;min-height:130px;line-height:1.6}
+.fg.has-error input,.fg.has-error textarea{border-color:var(--red)}
+.fg.has-error .err{display:block}
+.err{display:none;font-size:0.67rem;color:var(--red);font-weight:600;margin-top:2px}
+.input-ok{border-color:var(--green) !important}
+.char-count{font-size:0.67rem;color:var(--t4);text-align:right;margin-top:2px}
+.attach-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1.5px dashed var(--border);cursor:pointer;transition:border-color .2s;background:var(--off)}
+.attach-row:hover{border-color:var(--gold)}
+.attach-row span{font-size:0.78rem;color:var(--t3)}
+.attach-row strong{font-size:0.72rem;font-weight:700;color:var(--t2);display:block}
+.submit-btn{width:100%;background:var(--navy);color:#fff;border:none;padding:15px;font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:1.5rem;position:relative;overflow:hidden}
+.submit-btn:hover{background:var(--navy2)}
+.submit-btn:disabled{background:var(--t4);cursor:not-allowed}
+.submit-note{font-size:0.7rem;color:var(--t4);text-align:center;margin-top:10px;line-height:1.5}
+/* success state */
+.form-success{display:none;text-align:center;padding:3rem 2rem}
+.fs-icon{font-size:3.5rem;margin-bottom:1.25rem;animation:pop .5s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.fs-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:400;color:var(--t1);margin-bottom:10px}
+.fs-body{font-size:0.85rem;color:var(--t3);line-height:1.7;max-width:360px;margin:0 auto 1.5rem}
+.fs-ref{background:var(--off);border:1px solid var(--border);padding:10px 20px;font-size:0.82rem;color:var(--navy);font-weight:700;display:inline-block;margin-bottom:1.5rem}
+.back-btn{background:none;border:1.5px solid var(--border);padding:10px 28px;font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;color:var(--t2);transition:all .2s}
+.back-btn:hover{border-color:var(--navy);color:var(--navy)}
+
+/* SIDEBAR */
+.contact-sidebar{}
+.sidebar-card{background:#fff;border:1px solid var(--border);margin-bottom:1.5rem;overflow:hidden}
+.sc-head{background:var(--navy);padding:1.25rem 1.5rem}
+.sc-head h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:#fff}
+.sc-head p{font-size:0.72rem;color:rgba(255,255,255,0.5);margin-top:3px}
+.sc-body{padding:1.5rem}
+.contact-method{display:flex;gap:14px;align-items:flex-start;padding:1rem 0;border-bottom:1px solid var(--border2)}
+.contact-method:last-child{border-bottom:none;padding-bottom:0}
+.cm-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;border:1.5px solid var(--border)}
+.cm-label{font-size:0.65rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--t4);margin-bottom:3px}
+.cm-value{font-size:0.88rem;font-weight:600;color:var(--t1);margin-bottom:2px}
+.cm-note{font-size:0.7rem;color:var(--t4);line-height:1.4}
+.cm-link{font-size:0.72rem;color:var(--navy);text-decoration:none;font-weight:600;border-bottom:1px solid var(--navy);transition:color .2s}
+.cm-link:hover{color:var(--gold3);border-color:var(--gold3)}
+
+/* HOURS */
+.hours-grid{display:flex;flex-direction:column;gap:0}
+.hours-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border2)}
+.hours-row:last-child{border-bottom:none}
+.hours-row .day{font-size:0.78rem;font-weight:500;color:var(--t2)}
+.hours-row .time{font-size:0.75rem;color:var(--t4)}
+.hours-row .time.open{color:var(--green);font-weight:600}
+.live-status{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--green2);border:1px solid rgba(26,122,74,0.2);margin-bottom:1rem}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.live-status span{font-size:0.75rem;font-weight:600;color:var(--green)}
+
+/* SOCIAL */
+.social-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.soc-card{display:flex;flex-direction:column;align-items:center;gap:6px;padding:1rem;border:1.5px solid var(--border);cursor:pointer;transition:all .2s;text-decoration:none}
+.soc-card:hover{border-color:var(--navy);background:var(--off)}
+.soc-icon{font-size:1.4rem}
+.soc-name{font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--t2)}
+.soc-handle{font-size:0.65rem;color:var(--t4)}
+
+/* FAQ */
+.faq-section{background:var(--off);padding:5rem 0}
+.faq-inner{max-width:900px;margin:0 auto;padding:0 2rem}
+.faq-head{text-align:center;margin-bottom:3rem}
+.sec-eyebrow{font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold3);font-weight:600;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:10px}
+.sec-eyebrow::before,.sec-eyebrow::after{content:'';width:24px;height:1px;background:var(--gold)}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3vw,2.8rem);font-weight:300;color:var(--t1);line-height:1.2}
+.sec-title em{font-style:italic}
+.faq-cats{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:2.5rem}
+.faq-cat{padding:7px 18px;border:1.5px solid var(--border);background:#fff;font-size:0.72rem;font-weight:600;letter-spacing:0.06em;cursor:pointer;color:var(--t3);transition:all .2s;font-family:'DM Sans',sans-serif}
+.faq-cat:hover{border-color:var(--navy);color:var(--navy)}
+.faq-cat.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.faq-list{}
+.faq-item{background:#fff;border:1px solid var(--border);margin-bottom:8px;overflow:hidden}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:1.1rem 1.5rem;cursor:pointer;user-select:none;transition:background .2s;gap:1rem}
+.faq-q:hover{background:var(--off)}
+.faq-q h4{font-size:0.88rem;font-weight:600;color:var(--t1);line-height:1.4}
+.faq-icon{font-size:1.1rem;color:var(--t4);transition:transform .3s;flex-shrink:0;font-weight:300}
+.faq-item.open .faq-icon{transform:rotate(45deg);color:var(--navy)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.25,.46,.45,.94)}
+.faq-item.open .faq-a{max-height:300px}
+.faq-a-inner{padding:0 1.5rem 1.25rem;font-size:0.82rem;color:var(--t3);line-height:1.75;border-top:1px solid var(--border)}
+.faq-a-inner a{color:var(--navy);font-weight:600;text-decoration:none}
+.faq-a-inner a:hover{text-decoration:underline}
+
+/* MAP SECTION */
+.map-section{padding:5rem 0}
+.map-inner{max-width:1400px;margin:0 auto;padding:0 2rem}
+.map-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.office-card{background:#fff;border:1px solid var(--border);overflow:hidden;transition:box-shadow .3s}
+.office-card:hover{box-shadow:0 8px 32px rgba(0,0,0,0.1)}
+.oc-map{height:180px;display:flex;align-items:center;justify-content:center;font-size:4rem;position:relative;overflow:hidden}
+.oc-map::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.3),transparent)}
+.oc-map-label{position:absolute;bottom:12px;left:12px;background:rgba(255,255,255,0.9);padding:4px 12px;font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--t1);z-index:2}
+.oc-body{padding:1.5rem}
+.oc-city{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:var(--t1);margin-bottom:4px}
+.oc-role{font-size:0.65rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold3);margin-bottom:10px}
+.oc-addr{font-size:0.78rem;color:var(--t3);line-height:1.7}
+
+/* CTA STRIP */
+.cta-strip{background:var(--navy2);padding:4rem 0}
+.cta-strip-inner{max-width:1400px;margin:0 auto;padding:0 2rem;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center}
+.cta-strip h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3vw,2.5rem);font-weight:300;color:#fff}
+.cta-strip h2 em{font-style:italic;color:var(--gold2)}
+.cta-strip p{font-size:0.85rem;color:rgba(255,255,255,0.55);margin-top:8px}
+.cta-btns{display:flex;gap:12px;flex-shrink:0;flex-wrap:wrap}
+.btn-gold{background:var(--gold);color:var(--navy2);padding:14px 32px;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;border:none;cursor:pointer;transition:background .2s;text-decoration:none;display:inline-block}
+.btn-gold:hover{background:var(--gold2)}
+.btn-wht{background:transparent;color:#fff;padding:13px 32px;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;border:1.5px solid rgba(255,255,255,0.25);cursor:pointer;transition:all .2s;text-decoration:none;display:inline-block}
+.btn-wht:hover{border-color:var(--gold);color:var(--gold2)}
+
+/* FOOTER */
+footer{background:var(--navy2);padding:5rem 0 2rem;border-top:1px solid rgba(255,255,255,0.06)}
+.ft-inner{max-width:1400px;margin:0 auto;padding:0 2rem}
+.ft-grid{display:grid;grid-template-columns:2.5fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.ft-brand .logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;letter-spacing:0.1em;display:block;margin-bottom:1rem;text-decoration:none}
+.ft-brand p{font-size:0.78rem;color:rgba(255,255,255,0.45);line-height:1.8;max-width:270px;margin-bottom:1.5rem}
+.ft-socials{display:flex;gap:8px}
+.ft-soc{width:36px;height:36px;border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:0.82rem;color:rgba(255,255,255,0.4);transition:all .2s;font-weight:700}
+.ft-soc:hover{border-color:var(--gold);color:var(--gold2)}
+.ft-col h5{font-size:0.63rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold2);margin-bottom:1.25rem;font-weight:600}
+.ft-col ul{list-style:none}
+.ft-col li{margin-bottom:0.65rem}
+.ft-col a{font-size:0.78rem;color:rgba(255,255,255,0.5);text-decoration:none;transition:color .2s}
+.ft-col a:hover{color:#fff}
+.ft-bot{border-top:1px solid rgba(255,255,255,0.07);padding-top:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.ft-bot p{font-size:0.7rem;color:rgba(255,255,255,0.3)}
+.pay-row{display:flex;gap:8px}
+.pay-b{background:rgba(255,255,255,0.06);padding:5px 12px;font-size:0.62rem;font-weight:600;color:rgba(255,255,255,0.35);text-transform:uppercase}
+
+/* RESPONSIVE */
+@media(max-width:1100px){.main-section{grid-template-columns:1fr;gap:2rem}.contact-sidebar{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}.qc-inner{grid-template-columns:repeat(2,1fr)}.map-grid{grid-template-columns:1fr 1fr}.cta-strip-inner{grid-template-columns:1fr}}
+@media(max-width:900px){.nav-cats,.search-box{display:none}.qc-inner{grid-template-columns:repeat(2,1fr)}.ft-grid{grid-template-columns:1fr 1fr;gap:2rem}.contact-sidebar{grid-template-columns:1fr}}
+@media(max-width:600px){
+  .qc-inner{grid-template-columns:1fr 1fr}
+  .topic-tabs{grid-template-columns:repeat(2,1fr)}
+  .map-grid{grid-template-columns:1fr}
+  .social-grid{grid-template-columns:repeat(2,1fr)}
+  .cta-btns{flex-direction:column}
+  .ft-grid{grid-template-columns:1fr}
+  .ft-bot{flex-direction:column;text-align:center}
+  .main-section{grid-template-columns:1fr!important;gap:1.5rem!important;padding:1.5rem 1rem!important}
+  .form-grid{grid-template-columns:1fr!important}
+  .contact-sidebar{grid-template-columns:1fr!important}
+  .cta-strip-inner{padding:0 1rem!important}
+  .page-hero{padding:3rem 0 2.5rem!important}
+}
+
+/* ── MOBILE NAV FIX ── */
+.mob-menu-btn{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:6px;flex-shrink:0}
+.mob-menu-btn span{display:block;width:22px;height:2px;background:var(--t1,#111);transition:all .3s;border-radius:2px}
+.mob-menu-btn.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.mob-menu-btn.open span:nth-child(2){opacity:0}
+.mob-menu-btn.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:998}
+.mob-overlay.on{display:block}
+.mob-drawer{position:fixed;top:0;left:-300px;bottom:0;width:300px;background:#fff;z-index:999;transition:left .3s;overflow-y:auto;box-shadow:4px 0 30px rgba(0,0,0,0.15)}
+.mob-drawer.on{left:0}
+.mob-head{padding:1.25rem 1.5rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(0,0,0,0.1)}
+.mob-close{background:none;border:none;font-size:1.4rem;cursor:pointer;color:#555;line-height:1}
+.mob-nav a{display:flex;align-items:center;gap:12px;padding:14px 1.5rem;font-size:0.9rem;font-weight:500;color:#333;text-decoration:none;border-bottom:1px solid rgba(0,0,0,0.05);transition:all .2s}
+.mob-nav a:hover{background:#F7F5F1;color:#1B2A4A}
+@media(max-width:900px){
+  .mob-menu-btn{display:flex!important}
+  .nav-cats{display:none!important}
+  .nav-search-wrap,.search-wrap{display:none!important}
+  nav .nav-inner{padding:0 1rem!important}
+}
+@media(max-width:600px){
+  .cart-d{width:100%!important;right:-100%!important}
+}
+
+/* ── NAV MOBILE CART FIX ── */
+@media(max-width:900px){
+  .nav-inner{padding:0 1rem!important;gap:0.5rem!important}
+  .nav-logo{flex:1!important;text-align:left!important}
+  .nav-cats{display:none!important}
+  .nav-search-wrap,.search-wrap,.search-box,.nav-search{display:none!important}
+  .mob-menu-btn{display:flex!important}
+  .nav-right{flex-shrink:0!important;margin-left:0!important}
+}
+
+/* ── NAV MOBILE FIX ── */
+@media(max-width:900px){
+  .nav-inner{padding:0 1rem!important;gap:0.5rem!important}
+  .nav-logo{flex:1!important;text-align:left!important}
+  .nav-cats,.search-box{display:none!important}
+  .mob-menu-btn{display:flex!important}
+  .nav-right{flex-shrink:0!important}
+  .main-section{grid-template-columns:1fr!important;gap:1.5rem!important}
+}
+@media(max-width:600px){
+  .main-section{padding:1.5rem 1rem!important}
+  .contact-sidebar{grid-template-columns:1fr!important}
+  .qc-inner{grid-template-columns:1fr 1fr!important}
+  .map-grid{grid-template-columns:1fr!important}
+  .page-hero{padding:2.5rem 0 2rem!important}
+  .cart-d{width:100%!important;right:-100%!important}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">✦ <strong>We reply within 2 hours</strong> — Live chat, email & WhatsApp support · 7 days a week</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <button class="mob-menu-btn" id="mobBtn" onclick="toggleMob()"><span></span><span></span><span></span></button>
+    <a href="index.html" class="nav-logo gold-text" id="site-name">Quravio</a>
+    <div class="nav-cats">
+      <a href="quravio-shop.html">New In</a>
+      <a href="quravio-shop.html">Shop</a>
+      <a href="quravio-shop.html">Men</a><a href="quravio-shop.html">Women</a>
+      <a href="quravio-shop.html">Home</a>
+      <a href="quravio-about.html">About</a>
+      <a href="#" class="active">Contact</a>
+    </div>
+    <div class="nav-right">
+      <div class="search-box"><input type="text" placeholder="Search..."><button>🔍</button></div>
+      <button class="icon-btn">🤍</button>
+      <button class="icon-btn">👤</button>
+      <button class="icon-btn" onclick="window.location.href='quravio-shop.html'">🛒<span class="cart-count" id="cartBadge">0</span></button>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mob-overlay" id="mobOverlay" onclick="closeMob()"></div>
+<div class="mob-drawer" id="mobDrawer">
+  <div class="mob-head">
+    <span style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;letter-spacing:0.1em;background:linear-gradient(90deg,#8A6218,#E8C96A,#C9A84C,#E8C96A,#8A6218);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Quravio</span>
+    <button class="mob-close" onclick="closeMob()">&#10005;</button>
+  </div>
+  <div class="mob-nav">
+    <a href="index.html">&#127968; Home</a>
+    <a href="quravio-shop.html">&#128717; All Products</a>
+    <a href="quravio-about.html">&#8505;&#65039; About Us</a>
+    <a href="quravio-contact.html">&#128222; Contact</a>
+  </div>
+</div>
+
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="ph-gold-line"></div>
+  <svg class="ph-bg" viewBox="0 0 100 100" preserveAspectRatio="none"><defs><pattern id="g" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M 8 0 L 0 0 0 8" fill="none" stroke="white" stroke-width="0.3"/></pattern></defs><rect width="100" height="100" fill="url(#g)"/></svg>
+  <div class="ph-inner">
+    <div class="ph-eyebrow reveal" id="contact-eyebrow">Get In Touch</div>
+    <h1 class="ph-title reveal" id="contact-title">We'd Love to <em>Hear</em><br>from You</h1>
+    <p class="ph-sub reveal" id="contact-subtitle">Questions, feedback, order issues or just want to say hello — our team is here for you, every day of the week.</p>
+    <div class="breadcrumb reveal">
+      <a href="index.html">Home</a><span class="sep">/</span>
+      <span class="cur">Contact Us</span>
+    </div>
+  </div>
+</div>
+
+<!-- QUICK CONTACT CARDS -->
+<div class="qc-section">
+  <div class="qc-inner">
+    <a href="mailto:support@quravio.com" class="qc-card reveal">
+      <span class="qc-icon">📧</span>
+      <div class="qc-title">Email Us</div>
+      <div class="qc-value">support@quravio.com</div>
+      <div class="qc-note">Reply within 2 hours</div>
+      <div class="qc-badge">Fastest</div>
+    </a>
+    <a href="#" class="qc-card reveal">
+      <span class="qc-icon">💬</span>
+      <div class="qc-title">Live Chat</div>
+      <div class="qc-value">Chat with us now</div>
+      <div class="qc-note">Average wait: under 1 min</div>
+      <div class="qc-badge" style="background:var(--green)">Online</div>
+    </a>
+    <a href="https://wa.me/60123456789" class="qc-card reveal">
+      <span class="qc-icon">📱</span>
+      <div class="qc-title">WhatsApp</div>
+      <div class="qc-value">+60 12-345 6789</div>
+      <div class="qc-note">Mon–Sun, 9am–10pm MYT</div>
+    </a>
+    <a href="tel:+60312345678" class="qc-card reveal">
+      <span class="qc-icon">📞</span>
+      <div class="qc-title">Call Us</div>
+      <div class="qc-value">+60 3-1234 5678</div>
+      <div class="qc-note">Mon–Fri, 9am–6pm MYT</div>
+    </a>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-section">
+
+  <!-- FORM -->
+  <div class="reveal-l">
+    <div class="form-panel">
+      <div class="fp-head">
+        <h2>Send Us a Message</h2>
+        <p>Fill in the form below and we'll get back to you within 2 hours</p>
+      </div>
+      <div class="fp-body" id="formBody">
+
+        <!-- TOPIC TABS -->
+        <div style="margin-bottom:1.5rem">
+          <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--t2);margin-bottom:10px">What's this about?</div>
+          <div class="topic-tabs">
+            <div class="topic-tab active" onclick="selectTopic(this,'Order Enquiry')"><span class="tt-icon">📦</span>Order</div>
+            <div class="topic-tab" onclick="selectTopic(this,'Product Question')"><span class="tt-icon">❓</span>Product</div>
+            <div class="topic-tab" onclick="selectTopic(this,'Return / Exchange')"><span class="tt-icon">↩️</span>Returns</div>
+            <div class="topic-tab" onclick="selectTopic(this,'Shipping')"><span class="tt-icon">🚚</span>Shipping</div>
+            <div class="topic-tab" onclick="selectTopic(this,'Partnership')"><span class="tt-icon">🤝</span>Partnership</div>
+            <div class="topic-tab" onclick="selectTopic(this,'Other')"><span class="tt-icon">💬</span>Other</div>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="fg" id="fg-name">
+            <label>Full Name *</label>
+            <input type="text" id="inp-name" placeholder="James Richardson" oninput="liveValidate('name')">
+            <span class="err">Please enter your name</span>
+          </div>
+          <div class="fg" id="fg-email">
+            <label>Email Address *</label>
+            <input type="email" id="inp-email" placeholder="james@example.com" oninput="liveValidate('email')">
+            <span class="err">Please enter a valid email</span>
+          </div>
+          <div class="fg" id="fg-order">
+            <label>Order Number</label>
+            <input type="text" id="inp-order" placeholder="#QUR-123456 (if applicable)">
+          </div>
+          <div class="fg">
+            <label>Country</label>
+            <select id="inp-country">
+              <option value="">Select your country...</option>
+              <option>United Kingdom</option><option>United States</option>
+              <option>Australia</option><option>Canada</option>
+              <option>Malaysia</option><option>Singapore</option>
+              <option>UAE</option><option>Germany</option>
+              <option>France</option><option>Japan</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="fg full" id="fg-subject">
+            <label>Subject *</label>
+            <input type="text" id="inp-subject" placeholder="Brief description of your enquiry" oninput="liveValidate('subject')">
+            <span class="err">Please enter a subject</span>
+          </div>
+          <div class="fg full" id="fg-message">
+            <label>Message *</label>
+            <textarea id="inp-message" placeholder="Please provide as much detail as possible so we can help you quickly..." oninput="liveValidate('message');updateChar()"></textarea>
+            <div class="char-count"><span id="charNum">0</span> / 1000 characters</div>
+            <span class="err">Please enter your message (min. 20 characters)</span>
+          </div>
+        </div>
+
+        <!-- ATTACH -->
+        <div class="attach-row" onclick="document.getElementById('fileIn').click()">
+          <span>📎</span>
+          <div>
+            <strong>Attach a file (optional)</strong>
+            <span>Screenshots, receipts, photos — max 10MB</span>
+          </div>
+          <input type="file" id="fileIn" style="display:none" onchange="showFile(this)">
+          <span id="fileName" style="font-size:0.72rem;color:var(--navy);font-weight:600;margin-left:auto"></span>
+        </div>
+
+        <!-- CONSENT -->
+        <label style="display:flex;align-items:flex-start;gap:10px;margin-top:1.25rem;cursor:pointer">
+          <input type="checkbox" id="consent" style="width:16px;height:16px;flex-shrink:0;margin-top:2px;accent-color:var(--navy);cursor:pointer">
+          <span style="font-size:0.75rem;color:var(--t3);line-height:1.5">I agree to Quravio's <a href="#" style="color:var(--navy);font-weight:600">Privacy Policy</a> and consent to being contacted regarding my enquiry.</span>
+        </label>
+
+        <button class="submit-btn" id="submitBtn" onclick="submitForm()">
+          <span id="btnText">Send Message →</span>
+        </button>
+        <div class="submit-note">🔒 Your information is secure. We never share your details with third parties.</div>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="form-success" id="formSuccess">
+        <div class="fs-icon">✅</div>
+        <div class="fs-title">Message Sent!</div>
+        <p class="fs-body">Thank you for reaching out. Our support team will review your message and get back to you within 2 hours at the email address you provided.</p>
+        <div class="fs-ref">Ticket ref: <strong id="ticketRef"></strong></div>
+        <button class="back-btn" onclick="resetForm()">← Send Another Message</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="contact-sidebar reveal-r">
+
+    <!-- CONTACT METHODS -->
+    <div class="sidebar-card">
+      <div class="sc-head"><h3>Contact Methods</h3><p>Choose the best way to reach us</p></div>
+      <div class="sc-body">
+        <div class="live-status"><div class="live-dot"></div><span>Support team is online now</span></div>
+        <div class="contact-method">
+          <div class="cm-icon" style="background:#e8f4fd;border-color:#bee3f8">📧</div>
+          <div><div class="cm-label">Email</div><div class="cm-value" id="contact-email">support@quravio.com</div><div class="cm-note">Best for detailed enquiries</div><a href="mailto:support@quravio.com" class="cm-link" id="contact-email-link">Send email →</a></div>
+        </div>
+        <div class="contact-method">
+          <div class="cm-icon" style="background:#eaf4ee;border-color:#c6e6d0">💬</div>
+          <div><div class="cm-label">Live Chat</div><div class="cm-value">Available on site</div><div class="cm-note">Fastest response — avg. 45 seconds</div><a href="#" class="cm-link">Start chat →</a></div>
+        </div>
+        <div class="contact-method">
+          <div class="cm-icon" style="background:#f0fff4;border-color:#c6f6d5">📱</div>
+          <div><div class="cm-label">WhatsApp</div><div class="cm-value">+60 12-345 6789</div><div class="cm-note">Great for order updates</div><a href="https://wa.me/60123456789" class="cm-link">WhatsApp us →</a></div>
+        </div>
+        <div class="contact-method">
+          <div class="cm-icon" style="background:#fff5f0;border-color:#fed7aa">📞</div>
+          <div><div class="cm-label">Phone</div><div class="cm-value" id="contact-phone">+60 3-1234 5678</div><div class="cm-note" id="contact-hours">Weekdays 9am–6pm MYT</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOURS -->
+    <div class="sidebar-card">
+      <div class="sc-head"><h3>Support Hours</h3><p>When our team is available</p></div>
+      <div class="sc-body">
+        <div class="hours-grid">
+          <div class="hours-row"><span class="day">Monday</span><span class="time open">9:00 AM – 10:00 PM</span></div>
+          <div class="hours-row"><span class="day">Tuesday</span><span class="time open">9:00 AM – 10:00 PM</span></div>
+          <div class="hours-row"><span class="day">Wednesday</span><span class="time open">9:00 AM – 10:00 PM</span></div>
+          <div class="hours-row"><span class="day">Thursday</span><span class="time open">9:00 AM – 10:00 PM</span></div>
+          <div class="hours-row"><span class="day">Friday</span><span class="time open">9:00 AM – 10:00 PM</span></div>
+          <div class="hours-row"><span class="day">Saturday</span><span class="time open">10:00 AM – 8:00 PM</span></div>
+          <div class="hours-row"><span class="day">Sunday</span><span class="time open">10:00 AM – 6:00 PM</span></div>
+        </div>
+        <div style="margin-top:1rem;padding:10px 14px;background:var(--off);border:1px solid var(--border);font-size:0.72rem;color:var(--t3);line-height:1.5">
+          ⏱ All times are <strong>Malaysia Time (MYT / UTC+8)</strong>. Email responses within 2 hours during support hours.
+        </div>
+      </div>
+    </div>
+
+    <!-- SOCIAL -->
+    <div class="sidebar-card">
+      <div class="sc-head"><h3>Follow Quravio</h3><p>Stay connected on social media</p></div>
+      <div class="sc-body">
+        <div class="social-grid">
+          <a class="soc-card" href="#" id="social-ig-link"><span class="soc-icon">📸</span><span class="soc-name">Instagram</span><span class="soc-handle" id="social-ig-handle">@quravio</span></a>
+          <a class="soc-card" href="#" id="social-tt-link"><span class="soc-icon">▶️</span><span class="soc-name">TikTok</span><span class="soc-handle" id="social-tt-handle">@quravio</span></a>
+          <a class="soc-card" href="#" id="social-fb-link"><span class="soc-icon">🔗</span><span class="soc-name">Facebook</span><span class="soc-handle" id="social-fb-handle">/quravio</span></a>
+          <a class="soc-card" href="#"><span class="soc-icon">💼</span><span class="soc-name">LinkedIn</span><span class="soc-handle">/quravio</span></a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <div class="faq-inner">
+    <div class="faq-head">
+      <div class="sec-eyebrow reveal">Quick Answers</div>
+      <h2 class="sec-title reveal">Frequently Asked <em>Questions</em></h2>
+      <p style="font-size:0.85rem;color:var(--t4);margin-top:10px;line-height:1.7" class="reveal">Can't find what you need? <a href="mailto:support@quravio.com" style="color:var(--navy);font-weight:600">Email us</a> and we'll respond within 2 hours.</p>
+    </div>
+    <div class="faq-cats reveal">
+      <button class="faq-cat active" onclick="filterFaq('all',this)">All</button>
+      <button class="faq-cat" onclick="filterFaq('orders',this)">📦 Orders</button>
+      <button class="faq-cat" onclick="filterFaq('shipping',this)">🚚 Shipping</button>
+      <button class="faq-cat" onclick="filterFaq('returns',this)">↩️ Returns</button>
+      <button class="faq-cat" onclick="filterFaq('payment',this)">💳 Payment</button>
+      <button class="faq-cat" onclick="filterFaq('products',this)">💎 Products</button>
+    </div>
+    <div class="faq-list" id="faqList"></div>
+  </div>
+</div>
+
+<!-- OFFICES -->
+<div class="map-section">
+  <div class="map-inner">
+    <div style="text-align:center;margin-bottom:3rem">
+      <div class="sec-eyebrow reveal">Where to Find Us</div>
+      <h2 class="sec-title reveal" style="text-align:center">Our <em>Offices</em></h2>
+    </div>
+    <div class="map-grid">
+      <div class="office-card reveal">
+        <div class="oc-map" style="background:linear-gradient(135deg,#1B2A4A,#2d4070)">🏙️<div class="oc-map-label">HQ — Kuala Lumpur</div></div>
+        <div class="oc-body"><div class="oc-city" id="office1-city">Kuala Lumpur</div><div class="oc-role" id="office1-role">Global Headquarters</div><div class="oc-addr" id="office1-addr">Address coming soon</div></div>
+      </div>
+      <div class="office-card reveal">
+        <div class="oc-map" style="background:linear-gradient(135deg,#1a1a2e,#3a1a5a)">🏛️<div class="oc-map-label">Europe — London</div></div>
+        <div class="oc-body"><div class="oc-city" id="office2-city">London</div><div class="oc-role" id="office2-role">European Operations</div><div class="oc-addr" id="office2-addr">Address coming soon</div></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- CTA STRIP -->
+<div class="cta-strip">
+  <div class="cta-strip-inner">
+    <div>
+      <h2 class="reveal">Still have a question? <em>We're here.</em></h2>
+      <p class="reveal">Our team of luxury specialists is available 7 days a week to help with anything you need.</p>
+    </div>
+    <div class="cta-btns reveal">
+      <a href="#" class="btn-gold">💬 Start Live Chat</a>
+      <a href="quravio-shop.html" class="btn-wht">Browse the Shop →</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-inner">
+    <div class="ft-grid">
+      <div class="ft-brand">
+        <a href="index.html" class="logo gold-text">Quravio</a>
+        <p>Luxury · Refined · Unique. Curated pieces for those who demand nothing but the extraordinary.</p>
+        <div class="ft-socials">
+          <a class="ft-soc" href="#">in</a><a class="ft-soc" href="#">ig</a>
+          <a class="ft-soc" href="#">tw</a><a class="ft-soc" href="#">yt</a>
+        </div>
+      </div>
+      <div class="ft-col"><h5>Shop</h5><ul>
+        <li><a href="#">New Arrivals</a></li><li><a href="#">Bags</a></li>
+        <li><a href="#">Watches</a></li><li><a href="#">Jewellery</a></li><li><a href="#">Sale</a></li>
+      </ul></div>
+      <div class="ft-col"><h5>Company</h5><ul>
+        <li><a href="quravio-about.html">About Us</a></li>
+        <li><a href="#">Sustainability</a></li><li><a href="#">Careers</a></li>
+      </ul></div>
+      <div class="ft-col"><h5>Help</h5><ul>
+        <li><a href="#">Track Order</a></li><li><a href="#">Returns</a></li>
+        <li><a href="#">Shipping</a></li><li><a href="#">FAQ</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul></div>
+    </div>
+    <div class="ft-bot">
+      <p>© 2025 Quravio.com — All rights reserved.</p>
+      <div class="pay-row"><span class="pay-b">PayPal</span><span class="pay-b">Visa</span><span class="pay-b">MC</span><span class="pay-b">Amex</span></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── SCROLL REVEAL ──
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');obs.unobserve(x.target)}})},{threshold:0.1});
+document.querySelectorAll('.reveal,.reveal-l,.reveal-r').forEach(el=>obs.observe(el));
+
+// ── TOPIC TABS ──
+let selectedTopic='Order Enquiry';
+function selectTopic(el,topic){
+  document.querySelectorAll('.topic-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  selectedTopic=topic;
+  document.getElementById('inp-subject').placeholder=`Your ${topic.toLowerCase()} enquiry...`;
+}
+
+// ── FORM VALIDATION ──
+const rules={
+  name:v=>v.trim().length>=2,
+  email:v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+  subject:v=>v.trim().length>=4,
+  message:v=>v.trim().length>=20,
+};
+function liveValidate(f){
+  const inp=document.getElementById('inp-'+f);
+  const fg=document.getElementById('fg-'+f);
+  if(!inp||!fg)return true;
+  const ok=rules[f]?rules[f](inp.value):inp.value.trim().length>0;
+  if(inp.value.length>0){
+    fg.classList.toggle('has-error',!ok);
+    inp.classList.toggle('input-ok',ok);
+    inp.style.borderColor=ok?'var(--green)':inp.value.length>0?'var(--red)':'';
+  }
+  return ok;
+}
+function updateChar(){
+  const v=document.getElementById('inp-message').value;
+  document.getElementById('charNum').textContent=v.length;
+}
+function showFile(inp){
+  if(inp.files[0]) document.getElementById('fileName').textContent='📎 '+inp.files[0].name;
+}
+
+// ── SUBMIT ──
+function submitForm(){
+  const fields=['name','email','subject','message'];
+  const ok=fields.map(f=>liveValidate(f));
+  if(!document.getElementById('consent').checked){
+    alert('Please agree to our Privacy Policy to continue.');return;
+  }
+  if(!ok.every(Boolean)){
+    document.querySelector('.fg.has-error input, .fg.has-error textarea')?.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true;
+  document.getElementById('btnText').textContent='Sending…';
+  setTimeout(()=>{
+    document.getElementById('formBody').style.display='none';
+    document.getElementById('formSuccess').style.display='block';
+    document.getElementById('ticketRef').textContent='#QSP-'+Math.floor(100000+Math.random()*900000);
+  },1600);
+}
+function resetForm(){
+  document.getElementById('formBody').style.display='block';
+  document.getElementById('formSuccess').style.display='none';
+  document.getElementById('submitBtn').disabled=false;
+  document.getElementById('btnText').textContent='Send Message →';
+  ['name','email','order','subject','message'].forEach(f=>{
+    const inp=document.getElementById('inp-'+f);
+    if(inp){inp.value='';inp.style.borderColor='';}
+    const fg=document.getElementById('fg-'+f);
+    if(fg) fg.classList.remove('has-error');
+  });
+  document.getElementById('consent').checked=false;
+  document.getElementById('charNum').textContent='0';
+}
+
+// ── FAQ DATA ──
+const faqs=[
+  {cat:'orders',q:'How do I track my order?',a:'Once your order is dispatched, you\'ll receive a tracking email with a link to follow your package in real time. You can also <a href="#">track your order here</a> using your order number and email address.'},
+  {cat:'shipping',q:'Do you offer free worldwide shipping?',a:'Yes! Every Quravio order ships free worldwide, with no minimum spend. Standard delivery takes 7–14 business days. Express (3–5 days) and Next Day options are available for an additional fee at checkout.'},
+  {cat:'returns',q:'What is your return policy?',a:'We offer hassle-free 30-day returns on all orders. Items must be in original, unused condition with all tags attached. Contact us at <a href="mailto:support@quravio.com">support@quravio.com</a> to initiate a return and we\'ll cover the return shipping cost.'},
+  {cat:'payment',q:'Is PayPal checkout safe?',a:'Absolutely. All Quravio transactions are processed through PayPal\'s secure platform with full Buyer Protection. Your financial information is never stored on our servers. We also accept all major credit and debit cards.'},
+  {cat:'products',q:'Where do your products come from?',a:'Quravio is a luxury dropshipping business. We curate products from a vetted global network of premium suppliers. Every product passes our 12-point quality check before being listed. Your order ships directly from the supplier to your door.'},
+  {cat:'orders',q:'Can I cancel or change my order?',a:'Orders can be cancelled or modified within 1 hour of placement. After that, they may already be processed for dispatch. Please contact us immediately via Live Chat or email if you need to make changes.'},
+  {cat:'shipping',q:'How long does delivery take?',a:'Standard shipping: 7–14 business days. Express shipping: 3–5 business days. Next Day: available in select countries. All orders include full tracking from dispatch to delivery.'},
+  {cat:'products',q:'Are the products genuine luxury quality?',a:'Yes — every product is personally reviewed by our curation team before listing. We work exclusively with suppliers who meet our quality standards. If you\'re ever not satisfied, our 30-day return policy ensures you\'re fully protected.'},
+  {cat:'payment',q:'What currencies do you accept?',a:'Our prices are listed in USD. PayPal automatically converts to your local currency at the time of checkout. We accept all major credit and debit cards including Visa, Mastercard, and Amex.'},
+  {cat:'returns',q:'How long does a refund take?',a:'Once we receive and inspect your return, refunds are processed within 48 hours. The time it takes to appear in your account depends on your bank — typically 3–5 business days.'},
+];
+
+function renderFaq(items){
+  document.getElementById('faqList').innerHTML=items.map((f,i)=>`
+    <div class="faq-item reveal" id="faq${i}">
+      <div class="faq-q" onclick="toggleFaq(${i})">
+        <h4>${f.q}</h4>
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a"><div class="faq-a-inner">${f.a}</div></div>
+    </div>`).join('');
+  document.querySelectorAll('.faq-item.reveal').forEach(el=>obs.observe(el));
+}
+function toggleFaq(i){
+  const item=document.getElementById('faq'+i);
+  const wasOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(x=>x.classList.remove('open'));
+  if(!wasOpen) item.classList.add('open');
+}
+function filterFaq(cat,btn){
+  document.querySelectorAll('.faq-cat').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFaq(cat==='all'?faqs:faqs.filter(f=>f.cat===cat));
+}
+renderFaq(faqs);
+</script>
+
+<script>
+function toggleMob(){
+  var btn=document.getElementById('mobBtn');
+  var drawer=document.getElementById('mobDrawer');
+  var overlay=document.getElementById('mobOverlay');
+  if(!btn||!drawer)return;
+  btn.classList.toggle('open');
+  drawer.classList.toggle('on');
+  overlay.classList.toggle('on');
+  document.body.style.overflow=drawer.classList.contains('on')?'hidden':'';
+}
+function closeMob(){
+  var btn=document.getElementById('mobBtn');
+  var drawer=document.getElementById('mobDrawer');
+  var overlay=document.getElementById('mobOverlay');
+  if(btn)btn.classList.remove('open');
+  if(drawer)drawer.classList.remove('on');
+  if(overlay)overlay.classList.remove('on');
+  document.body.style.overflow='';
+}
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, query, where, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyAbE76HZVyfiVw0SyHNzpAxRCeb_uLCW7Y",
+  authDomain:"quravio-store.firebaseapp.com",
+  projectId:"quravio-store",
+  storageBucket:"quravio-store.firebasestorage.app",
+  messagingSenderId:"1066738660513",
+  appId:"1:1066738660513:web:c7b54e111802d6fff5ece0"
+});
+const db = getFirestore(app);
+
+// ── LOAD CONTENT FROM ADMIN ───────────────────────
+async function loadContent() {
+  try {
+    const snap = await getDocs(query(collection(db,'settings'), where('key','==','content')));
+    if (snap.empty) return;
+    const d = snap.docs[0].data();
+
+    // Site name
+    const sn = document.getElementById('site-name');
+    if (sn && d.siteName) sn.textContent = d.siteName;
+
+    // Page hero
+    if (d.contactTitle) { const el=document.getElementById('contact-title'); if(el) el.innerHTML=d.contactTitle; }
+    if (d.contactSubtitle) { const el=document.getElementById('contact-subtitle'); if(el) el.textContent=d.contactSubtitle; }
+    if (d.contactEyebrow) { const el=document.getElementById('contact-eyebrow'); if(el) el.textContent=d.contactEyebrow; }
+
+    // Contact info
+    if (d.contactEmail) {
+      const el=document.getElementById('contact-email');
+      const link=document.getElementById('contact-email-link');
+      if(el) el.textContent=d.contactEmail;
+      if(link) link.href='mailto:'+d.contactEmail;
+    }
+    if (d.contactWhatsapp) {
+      const el=document.getElementById('contact-whatsapp');
+      const link=document.getElementById('contact-wa-link');
+      if(el) el.textContent=d.contactWhatsapp;
+      if(link) link.href='https://wa.me/'+d.contactWhatsapp.replace(/[^0-9]/g,'');
+    }
+    if (d.contactPhone) { const el=document.getElementById('contact-phone'); if(el) el.textContent=d.contactPhone; }
+    if (d.contactHours) { const el=document.getElementById('contact-hours'); if(el) el.textContent=d.contactHours; }
+
+    // Office addresses
+    if (d.office1City) { const el=document.getElementById('office1-city'); if(el) el.textContent=d.office1City; }
+    if (d.office1Addr) { const el=document.getElementById('office1-addr'); if(el) el.innerHTML=d.office1Addr; }
+    if (d.office2City) { const el=document.getElementById('office2-city'); if(el) el.textContent=d.office2City; }
+    if (d.office2Addr) { const el=document.getElementById('office2-addr'); if(el) el.innerHTML=d.office2Addr; }
+
+    // Social links
+    if (d.socialIg) { const el=document.getElementById('social-ig-link'); if(el) el.href=d.socialIg; }
+    if (d.socialFb) { const el=document.getElementById('social-fb-link'); if(el) el.href=d.socialFb; }
+    if (d.socialTt) { const el=document.getElementById('social-tt-link'); if(el) el.href=d.socialTt; }
+
+    // Footer
+    if (d.footerCopy) { const el=document.getElementById('footer-copy'); if(el) el.textContent=d.footerCopy; }
+
+  } catch(e) { /* use defaults */ }
+}
+
+// ── SAVE CONTACT FORM TO FIREBASE ────────────────
+window.submitForm = async function() {
+  const name = document.getElementById('fname')?.value + ' ' + (document.getElementById('lname')?.value || '');
+  const email = document.getElementById('femail')?.value;
+  const msg = document.getElementById('fmsg')?.value;
+  if (!email || !msg) { alert('Please fill in email and message.'); return; }
+  try {
+    await addDoc(collection(db,'messages'), {
+      name: name.trim(),
+      email,
+      message: msg,
+      createdAt: serverTimestamp()
+    });
+    const success = document.getElementById('form-success');
+    const form = document.getElementById('contact-form');
+    if (success) success.style.display = 'block';
+    if (form) form.style.display = 'none';
+  } catch(e) {
+    alert('Could not send message. Please email us directly.');
+  }
+};
+
+loadContent();
+</script>
+
+<script>
+(function(){
+  var cart = JSON.parse(localStorage.getItem('qcart')||'[]');
+  var count = cart.reduce(function(s,i){return s+i.qty},0);
+  var badge = document.getElementById('cartBadge');
+  if(badge) badge.textContent = count;
+})();
+</script>
+</body>
+</html>
