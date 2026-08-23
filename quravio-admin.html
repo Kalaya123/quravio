@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quravio Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A84C;--gold2:#E8C96A;--gold3:#8A6218;
+  --navy:#1B2A4A;--navy2:#0F1E36;
+  --bg:#F8F9FA;--white:#fff;--border:#E5E7EB;
+  --t1:#111827;--t2:#374151;--t3:#6B7280;--t4:#9CA3AF;
+  --red:#DC2626;--green:#059669;--green2:#ECFDF5;
+  --blue:#2563EB;--muted:#6B7280;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);display:flex}
+
+/* LOGIN */
+.login-screen{position:fixed;inset:0;background:var(--navy2);display:flex;align-items:center;justify-content:center;z-index:9999}
+.login-box{background:#fff;padding:2.5rem;width:100%;max-width:380px;border-radius:12px}
+.login-logo{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;letter-spacing:0.1em;text-align:center;background:linear-gradient(90deg,var(--gold3),var(--gold2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+.login-sub{text-align:center;font-size:0.8rem;color:var(--t3);margin-bottom:2rem}
+.login-field{margin-bottom:1rem}
+.login-field label{display:block;font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--t3);margin-bottom:6px}
+.login-field input{width:100%;border:1.5px solid var(--border);padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;border-radius:6px;transition:border-color .2s}
+.login-field input:focus{border-color:var(--gold)}
+.login-btn{width:100%;background:var(--navy);color:#fff;border:none;padding:13px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;border-radius:6px;margin-top:0.5rem;transition:background .2s}
+.login-btn:hover{background:var(--navy2)}
+.login-err{display:none;color:var(--red);font-size:0.78rem;text-align:center;margin-top:8px}
+
+/* SIDEBAR */
+.sidebar{width:240px;background:var(--navy2);height:100vh;overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1)}
+.sb-logo{padding:1.5rem;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sb-logo span{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;letter-spacing:0.1em;background:linear-gradient(90deg,var(--gold3),var(--gold2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sb-logo small{display:block;font-size:0.65rem;color:rgba(255,255,255,0.35);letter-spacing:0.12em;text-transform:uppercase;margin-top:2px}
+.sb-section{padding:8px 16px 4px;font-size:0.62rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-top:8px}
+.nv{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;font-size:0.82rem;font-weight:500;color:rgba(255,255,255,0.6);border-radius:6px;margin:1px 8px;transition:all .2s}
+.nv:hover{background:rgba(255,255,255,0.06);color:#fff}
+.nv.active{background:rgba(201,168,76,0.15);color:var(--gold2)}
+.nv .ico{font-size:1rem;flex-shrink:0}
+.sb-foot{margin-top:auto;padding:1rem;border-top:1px solid rgba(255,255,255,0.08)}
+.logout-btn{width:100%;background:rgba(220,38,38,0.15);color:#FCA5A5;border:none;padding:9px;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:500;cursor:pointer;border-radius:6px;transition:all .2s}
+.logout-btn:hover{background:rgba(220,38,38,0.25)}
+
+/* MAIN */
+.main{flex:1;height:100vh;overflow-y:auto;display:flex;flex-direction:column}
+.main::-webkit-scrollbar{width:6px}
+.main::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:50}
+.page-title{font-size:1rem;font-weight:600;color:var(--t1)}
+.tb-right{display:flex;align-items:center;gap:10px}
+.view-site{text-decoration:none;font-size:0.75rem;font-weight:500;color:var(--navy);border:1.5px solid var(--border);padding:6px 14px;border-radius:6px;transition:all .2s}
+.view-site:hover{border-color:var(--navy);background:var(--navy);color:#fff}
+.content{padding:2rem;flex:1}
+
+/* PAGE */
+.page{display:none}
+.page.active{display:block}
+.phdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap}
+.pht h1{font-size:1.4rem;font-weight:700;color:var(--t1);margin-bottom:4px}
+.pht p{font-size:0.82rem;color:var(--t3)}
+.pha{display:flex;gap:10px;flex-wrap:wrap}
+
+/* BUTTONS */
+.btnp{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;border:none;border-radius:6px;transition:all .2s}
+.btnp.navy{background:var(--navy);color:#fff}
+.btnp.navy:hover{background:var(--navy2)}
+.btnp.gld{background:var(--gold);color:var(--navy2)}
+.btnp.gld:hover{background:var(--gold2)}
+.btnp.red{background:var(--red);color:#fff}
+.btnp.red:hover{background:#b91c1c}
+.btnp.out{background:#fff;color:var(--t2);border:1.5px solid var(--border)}
+.btnp.out:hover{border-color:var(--navy);color:var(--navy)}
+
+/* STATS GRID */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.25rem}
+.stat-label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--t3);margin-bottom:8px}
+.stat-val{font-size:1.8rem;font-weight:700;color:var(--t1);margin-bottom:4px}
+.stat-sub{font-size:0.75rem;color:var(--t3)}
+.stat-icon{font-size:1.5rem;float:right;margin-top:-2rem}
+
+/* TABLES */
+.tbl-wrap{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.tbl-head{padding:1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.tbl-head h3{font-size:0.95rem;font-weight:600}
+.srch{border:1.5px solid var(--border);padding:7px 12px;font-family:'DM Sans',sans-serif;font-size:0.82rem;outline:none;border-radius:6px;width:220px}
+.srch:focus{border-color:var(--gold)}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 16px;text-align:left;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--t3);border-bottom:1px solid var(--border);background:#FAFAFA}
+td{padding:12px 16px;font-size:0.82rem;color:var(--t2);border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FAFAFA}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.68rem;font-weight:600}
+.b-active{background:#ECFDF5;color:#059669}
+.b-inactive{background:#FEF2F2;color:#DC2626}
+.b-pending{background:#FEF3C7;color:#D97706}
+.b-processing{background:#EFF6FF;color:#2563EB}
+.b-shipped{background:#F5F3FF;color:#7C3AED}
+.b-delivered{background:#ECFDF5;color:#059669}
+.tbl-actions{display:flex;gap:6px}
+.ta-btn{background:none;border:1.5px solid var(--border);padding:4px 10px;font-size:0.72rem;font-weight:500;cursor:pointer;border-radius:4px;font-family:'DM Sans',sans-serif;transition:all .2s}
+.ta-btn:hover{border-color:var(--navy);color:var(--navy)}
+.ta-btn.del:hover{border-color:var(--red);color:var(--red)}
+
+/* FORM SECTIONS */
+.ss{background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1rem}
+.ss h3{font-size:0.9rem;font-weight:700;color:var(--t1);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.desc{font-size:0.78rem;color:var(--t3);margin-bottom:1rem;line-height:1.6}
+.size-badge{background:var(--gold);color:var(--navy2);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg.full{grid-column:1/-1}
+.flbl{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--t3)}
+.fi{border:1.5px solid var(--border);padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:0.85rem;color:var(--t1);outline:none;border-radius:6px;transition:border-color .2s;width:100%}
+.fi:focus{border-color:var(--gold)}
+.ft{border:1.5px solid var(--border);padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:0.85rem;color:var(--t1);outline:none;border-radius:6px;transition:border-color .2s;width:100%;resize:vertical}
+.ft:focus{border-color:var(--gold)}
+.fhint{font-size:0.7rem;color:var(--t4);margin-top:3px}
+
+/* UPLOAD BOX */
+.upload-box{border:2px dashed var(--border);border-radius:8px;padding:18px;text-align:center;cursor:pointer;transition:all .2s;background:#FAFAFA}
+.upload-box:hover{border-color:var(--gold);background:#FFFBF0}
+.upload-box .ub-icon{font-size:2rem;margin-bottom:6px}
+.upload-box .ub-title{font-weight:600;font-size:13px;color:var(--navy)}
+.upload-box .ub-hint{font-size:11px;color:var(--t4);margin-top:3px}
+.upload-progress{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:8px;display:none}
+.upload-progress-bar{height:100%;background:var(--gold);width:0;transition:width .3s;border-radius:2px}
+.upload-status{font-size:12px;color:var(--t3);margin-top:4px;min-height:16px}
+.upload-preview{margin-top:8px;display:none}
+.upload-preview img{max-height:100px;border-radius:6px;border:1px solid var(--border);display:block}
+
+/* TABS */
+.ctabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem;background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px}
+.ctab{padding:8px 16px;border-radius:6px;border:none;font-size:0.78rem;font-weight:500;cursor:pointer;color:var(--t3);background:transparent;transition:all .2s;font-family:'DM Sans',sans-serif}
+.ctab:hover{color:var(--t1);background:var(--bg)}
+.ctab.active{background:var(--navy);color:#fff;font-weight:600}
+.ctab-panel{display:none}
+.ctab-panel.active{display:block}
+
+/* SAVE BAR */
+.save-bar{background:#fff;border-top:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;gap:1rem;position:sticky;bottom:0}
+.save-msg{font-size:0.82rem;color:var(--green);font-weight:600;display:none}
+
+/* SOCIAL TOGGLE */
+.soc-row{border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:10px}
+.soc-row-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.soc-row-left{display:flex;align-items:center;gap:10px}
+.soc-icon{font-size:1.3rem}
+.soc-name{font-weight:600;font-size:14px}
+.soc-sub{font-size:11px;color:var(--t3)}
+.toggle{position:relative;display:inline-block;width:44px;height:24px}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:#CBD5E1;border-radius:24px;cursor:pointer;transition:.3s}
+.toggle-slider:before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+.toggle input:checked + .toggle-slider{background:var(--green)}
+.toggle input:checked + .toggle-slider:before{transform:translateX(20px)}
+
+/* DASHBOARD */
+.quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.qa-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.25rem;cursor:pointer;transition:all .2s;text-align:center}
+.qa-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.qa-ico{font-size:2rem;margin-bottom:8px}
+.qa-title{font-size:0.82rem;font-weight:600;color:var(--t1)}
+.qa-sub{font-size:0.72rem;color:var(--t3);margin-top:3px}
+
+/* ALERT */
+.alert{border-radius:8px;padding:12px 16px;font-size:0.82rem;margin-bottom:1rem;display:flex;align-items:flex-start;gap:10px}
+.alert.info{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
+.alert.success{background:var(--green2);color:#065F46;border:1px solid #A7F3D0}
+.alert.warning{background:#FFFBEB;color:#92400E;border:1px solid #FDE68A}
+
+/* PRODUCT FORM */
+.prod-img-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
+.img-slot{aspect-ratio:1;border:2px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;background:#FAFAFA;transition:all .2s}
+.img-slot:hover{border-color:var(--gold)}
+.img-slot img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.img-slot .add-ico{font-size:1.5rem;color:var(--t4)}
+.img-slot .del-img{position:absolute;top:4px;right:4px;background:rgba(220,38,38,0.9);color:#fff;border:none;width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:0.7rem;display:none;align-items:center;justify-content:center}
+.img-slot:hover .del-img{display:flex}
+
+@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}.quick-actions{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.fgrid{grid-template-columns:1fr}.fg.full{grid-column:1}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">Quravio</div>
+    <div class="login-sub">Admin Panel &mdash; Secure Access</div>
+    <div class="login-field"><label>Username</label><input type="text" id="lu" placeholder="admin" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="login-field"><label>Password</label><input type="password" id="lp" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="login-btn" onclick="doLogin()">Sign In &rarr;</button>
+    <div class="login-err" id="loginErr">Incorrect username or password</div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <span>Quravio</span>
+    <small>Admin Panel</small>
+  </div>
+  <div class="sb-section">Main</div>
+  <div class="nv active" onclick="nav('dashboard')"><span class="ico">&#128202;</span> Dashboard</div>
+  <div class="sb-section">Products</div>
+  <div class="nv" onclick="nav('add-product')"><span class="ico">&#10133;</span> Add Product</div>
+  <div class="nv" onclick="nav('products')"><span class="ico">&#128717;</span> All Products</div>
+  <div class="nv" onclick="nav('inventory')"><span class="ico">&#128230;</span> Inventory</div>
+  <div class="sb-section">Orders</div>
+  <div class="nv" onclick="nav('orders')"><span class="ico">&#128666;</span> Orders</div>
+  <div class="nv" onclick="nav('customers')"><span class="ico">&#128101;</span> Customers</div>
+  <div class="sb-section">Website</div>
+  <div class="nv" onclick="nav('content')"><span class="ico">&#9999;&#65039;</span> Edit Pages</div>
+  <div class="nv" onclick="nav('settings')"><span class="ico">&#9881;&#65039;</span> Settings</div>
+  <div class="sb-foot">
+    <button class="logout-btn" onclick="doLogout()">&#128274; Sign Out</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="page-title" id="pageTitle">Dashboard</div>
+    <div class="tb-right">
+      <a href="https://kalaya123.github.io/quravio/" target="_blank" class="view-site">&#127760; View Site</a>
+    </div>
+  </div>
+  <div class="content" id="mainContent">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="phdr">
+        <div class="pht"><h1>Dashboard</h1><p>Welcome back. Here's what's happening with your store.</p></div>
+        <div class="pha">
+          <button class="btnp navy" onclick="nav('add-product')">&#10133; Add Product</button>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon">&#128717;</div><div class="stat-label">Total Products</div><div class="stat-val" id="d-products">—</div><div class="stat-sub">Active in store</div></div>
+        <div class="stat-card"><div class="stat-icon">&#128666;</div><div class="stat-label">Total Orders</div><div class="stat-val" id="d-orders">—</div><div class="stat-sub">All time</div></div>
+        <div class="stat-card"><div class="stat-icon">&#128101;</div><div class="stat-label">Customers</div><div class="stat-val" id="d-customers">—</div><div class="stat-sub">Registered</div></div>
+        <div class="stat-card"><div class="stat-icon">&#128181;</div><div class="stat-label">Revenue</div><div class="stat-val" id="d-revenue">—</div><div class="stat-sub">Total sales</div></div>
+      </div>
+      <div class="quick-actions">
+        <div class="qa-card" onclick="nav('add-product')"><div class="qa-ico">&#10133;</div><div class="qa-title">Add Product</div><div class="qa-sub">Upload to store</div></div>
+        <div class="qa-card" onclick="nav('orders')"><div class="qa-ico">&#128666;</div><div class="qa-title">View Orders</div><div class="qa-sub">Manage orders</div></div>
+        <div class="qa-card" onclick="nav('content')"><div class="qa-ico">&#9999;&#65039;</div><div class="qa-title">Edit Pages</div><div class="qa-sub">Change text & images</div></div>
+        <div class="qa-card" onclick="nav('settings')"><div class="qa-ico">&#9881;&#65039;</div><div class="qa-title">Settings</div><div class="qa-sub">PayPal & store</div></div>
+      </div>
+      <div class="tbl-wrap">
+        <div class="tbl-head"><h3>Recent Orders</h3><button class="btnp out" onclick="nav('orders')">View All</button></div>
+        <table><thead><tr><th>Order #</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody id="dash-orders"><tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--t4)">Loading...</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <!-- ADD PRODUCT -->
+    <div class="page" id="page-add-product">
+      <div class="phdr">
+        <div class="pht"><h1>Add New Product</h1><p>Fill in product details and upload images.</p></div>
+        <div class="pha">
+          <button class="btnp out" onclick="clearProdForm()">&#10005; Clear</button>
+          <button class="btnp gld" onclick="saveProduct()">&#10003; Save Product</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:1.5rem;align-items:start">
+        <div>
+          <div class="ss">
+            <h3>&#128196; Basic Information</h3>
+            <div class="fgrid">
+              <div class="fg full"><label class="flbl">Product Name *</label><input type="text" class="fi" id="p-name" placeholder="e.g. Premium Leather Bag"></div>
+              <div class="fg full"><label class="flbl">Description *</label><textarea class="ft" id="p-desc" rows="4" placeholder="Describe the product..."></textarea></div>
+              <div class="fg"><label class="flbl">Category *</label>
+                <select class="fi" id="p-cat">
+                  <option value="">Select category...</option>
+                  <option>Women's Fashion</option>
+                  <option>Men's Fashion</option>
+                  <option>Accessories</option>
+                  <option>Jewellery</option>
+                  <option>Bags & Handbags</option>
+                  <option>Footwear</option>
+                  <option>Beauty</option>
+                </select>
+              </div>
+              <div class="fg"><label class="flbl">SKU</label><input type="text" class="fi" id="p-sku" placeholder="e.g. BAG-001"></div>
+              <div class="fg"><label class="flbl">Tags (comma separated)</label><input type="text" class="fi" id="p-tags" placeholder="luxury, bag, leather"></div>
+              <div class="fg"><label class="flbl">Weight (kg)</label><input type="number" class="fi" id="p-weight" placeholder="0.5" step="0.1"></div>
+            </div>
+          </div>
+          <div class="ss">
+            <h3>&#128247; Product Images</h3>
+            <div class="desc">Upload up to 6 images. First image is the main photo shown in shop.</div>
+            <div class="prod-img-grid" id="imgGrid">
+              <div class="img-slot" onclick="triggerImgUpload(0)" id="slot-0"><input type="file" accept="image/*" style="display:none" id="img-file-0" onchange="uploadProductImg(0,this)"><div class="add-ico">&#128247;<div style="font-size:0.65rem;color:var(--t4);margin-top:4px">Main Photo</div></div></div>
+              <div class="img-slot" onclick="triggerImgUpload(1)" id="slot-1"><input type="file" accept="image/*" style="display:none" id="img-file-1" onchange="uploadProductImg(1,this)"><div class="add-ico">&#43;</div></div>
+              <div class="img-slot" onclick="triggerImgUpload(2)" id="slot-2"><input type="file" accept="image/*" style="display:none" id="img-file-2" onchange="uploadProductImg(2,this)"><div class="add-ico">&#43;</div></div>
+              <div class="img-slot" onclick="triggerImgUpload(3)" id="slot-3"><input type="file" accept="image/*" style="display:none" id="img-file-3" onchange="uploadProductImg(3,this)"><div class="add-ico">&#43;</div></div>
+              <div class="img-slot" onclick="triggerImgUpload(4)" id="slot-4"><input type="file" accept="image/*" style="display:none" id="img-file-4" onchange="uploadProductImg(4,this)"><div class="add-ico">&#43;</div></div>
+              <div class="img-slot" onclick="triggerImgUpload(5)" id="slot-5"><input type="file" accept="image/*" style="display:none" id="img-file-5" onchange="uploadProductImg(5,this)"><div class="add-ico">&#43;</div></div>
+            </div>
+            <div id="img-upload-status" style="margin-top:8px;font-size:0.78rem;color:var(--t3)"></div>
+          </div>
+        </div>
+        <div>
+          <div class="ss">
+            <h3>&#128181; Pricing</h3>
+            <div class="fgrid" style="grid-template-columns:1fr">
+              <div class="fg"><label class="flbl">Price (USD) *</label><input type="number" class="fi" id="p-price" placeholder="0.00" step="0.01"></div>
+              <div class="fg"><label class="flbl">Compare Price (original)</label><input type="number" class="fi" id="p-compare" placeholder="0.00" step="0.01"><div class="fhint">If set, shows as crossed out original price</div></div>
+              <div class="fg"><label class="flbl">Cost Price (your cost)</label><input type="number" class="fi" id="p-cost" placeholder="0.00" step="0.01"></div>
+            </div>
+          </div>
+          <div class="ss">
+            <h3>&#128230; Inventory</h3>
+            <div class="fgrid" style="grid-template-columns:1fr">
+              <div class="fg"><label class="flbl">Stock Quantity</label><input type="number" class="fi" id="p-stock" placeholder="100"></div>
+              <div class="fg"><label class="flbl">Status</label>
+                <select class="fi" id="p-status">
+                  <option value="active">Active (visible in shop)</option>
+                  <option value="draft">Draft (hidden)</option>
+                  <option value="archived">Archived</option>
+                </select>
+              </div>
+              <div class="fg" style="flex-direction:row;align-items:center;gap:10px">
+                <input type="checkbox" id="p-featured" style="width:18px;height:18px;accent-color:var(--navy)">
+                <label for="p-featured" style="font-size:0.85rem;cursor:pointer">Mark as Featured Product</label>
+              </div>
+            </div>
+          </div>
+          <div class="ss">
+            <h3>&#128279; Supplier</h3>
+            <div class="fgrid" style="grid-template-columns:1fr">
+              <div class="fg"><label class="flbl">Supplier URL</label><input type="url" class="fi" id="p-supplier" placeholder="https://aliexpress.com/..."></div>
+            </div>
+          </div>
+          <button class="btnp gld" style="width:100%;justify-content:center" onclick="saveProduct()">&#10003; Save Product</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALL PRODUCTS -->
+    <div class="page" id="page-products">
+      <div class="phdr">
+        <div class="pht"><h1>All Products</h1><p id="prod-count">Loading products...</p></div>
+        <div class="pha">
+          <button class="btnp out" onclick="exportCSV('products')">&#11123; Export CSV</button>
+          <button class="btnp navy" onclick="nav('add-product')">&#10133; Add Product</button>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <div class="tbl-head">
+          <input class="srch" type="text" placeholder="Search products..." oninput="filterProds(this.value)">
+          <select class="fi" style="width:150px" onchange="filterProdStatus(this.value)">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="draft">Draft</option>
+          </select>
+        </div>
+        <table><thead><tr><th><input type="checkbox" onchange="selectAll(this,'prod-cb')"></th><th>Image</th><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="prod-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="page" id="page-orders">
+      <div class="phdr">
+        <div class="pht"><h1>Orders</h1><p id="order-count">Loading orders...</p></div>
+        <div class="pha"><button class="btnp out" onclick="exportCSV('orders')">&#11123; Export CSV</button></div>
+      </div>
+      <div class="tbl-wrap">
+        <div class="tbl-head">
+          <input class="srch" type="text" placeholder="Search orders..." oninput="filterOrders(this.value)">
+          <select class="fi" style="width:160px" onchange="filterOrderStatus(this.value)">
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+          </select>
+        </div>
+        <table><thead><tr><th>Order #</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody id="orders-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- CUSTOMERS -->
+    <div class="page" id="page-customers">
+      <div class="phdr">
+        <div class="pht"><h1>Customers</h1><p id="cust-count">Loading customers...</p></div>
+        <div class="pha"><button class="btnp out" onclick="exportCSV('customers')">&#11123; Export CSV</button></div>
+      </div>
+      <div class="tbl-wrap">
+        <div class="tbl-head"><input class="srch" type="text" placeholder="Search customers..." oninput="filterCusts(this.value)"></div>
+        <table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Orders</th><th>Total Spent</th><th>Since</th></tr></thead>
+        <tbody id="custs-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- INVENTORY -->
+    <div class="page" id="page-inventory">
+      <div class="phdr"><div class="pht"><h1>Inventory</h1><p>Update stock levels.</p></div></div>
+      <div class="tbl-wrap">
+        <table><thead><tr><th>Product</th><th>SKU</th><th>Category</th><th>Current Stock</th><th>Update Stock</th><th>Action</th></tr></thead>
+        <tbody id="inv-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- EDIT PAGES CONTENT -->
+    <div class="page" id="page-content">
+      <div class="phdr">
+        <div class="pht"><h1>&#9999;&#65039; Edit Pages</h1><p>Change any text, image or banner on your website. Changes go live instantly.</p></div>
+        <div class="pha"><button class="btnp gld" onclick="saveAllContent()">&#10003; Save All Changes</button></div>
+      </div>
+
+      <!-- PAGE TABS -->
+      <div class="ctabs">
+        <button class="ctab active" onclick="showCTab('global',this)">&#127760; Global</button>
+        <button class="ctab" onclick="showCTab('homepage',this)">&#127968; Homepage</button>
+        <button class="ctab" onclick="showCTab('shop',this)">&#128717; Shop</button>
+        <button class="ctab" onclick="showCTab('product',this)">&#128247; Product</button>
+        <button class="ctab" onclick="showCTab('about',this)">&#8505;&#65039; About</button>
+        <button class="ctab" onclick="showCTab('contact',this)">&#128222; Contact</button>
+        <button class="ctab" onclick="showCTab('footer',this)">&#128196; Footer</button>
+      </div>
+
+      <!-- GLOBAL TAB -->
+      <div class="ctab-panel active" id="ctab-global">
+        <div class="ss">
+          <h3>&#127760; Global Settings — Applies to ALL Pages</h3>
+          <div class="desc">These settings apply to every page on your website.</div>
+          <div class="fgrid">
+            <div class="fg"><label class="flbl">Store Name (shows in logo)</label><input type="text" class="fi" id="cv-siteName" placeholder="Quravio"/></div>
+            <div class="fg"><label class="flbl">Page Title Suffix</label><input type="text" class="fi" id="cv-titleSuffix" placeholder="Luxury Fashion Store"/></div>
+            <div class="fg full"><label class="flbl">Announcement Bar Text (top of every page)</label><input type="text" class="fi" id="cv-topbarText" placeholder="Free worldwide shipping on all orders..."/></div>
+          </div>
+        </div>
+        <div class="ss">
+          <h3>&#128230; Promo Code Settings</h3>
+          <div class="fgrid">
+            <div class="fg"><label class="flbl">Active Promo Code</label><input type="text" class="fi" id="cv-promoCode" placeholder="e.g. QURAVIO20"/></div>
+            <div class="fg"><label class="flbl">Discount %</label><input type="number" class="fi" id="cv-promoDiscount" placeholder="20" min="1" max="90"/></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HOMEPAGE TAB -->
+      <div class="ctab-panel" id="ctab-homepage">
+        <div class="ss">
+          <h3>&#127916; Hero Banner — Slide 1 <span class="size-badge">1920 × 800px</span></h3>
+          <div class="desc">The main banner. Click below to upload a background image.</div>
+          <div class="fgrid">
+            <div class="fg full">
+              <label class="flbl">Background Image</label>
+              <div class="upload-box" onclick="document.getElementById('ub-slide0').click()">
+                <input type="file" id="ub-slide0" accept="image/*" style="display:none" onchange="uploadContent(this,'cv-slide0Img','up-slide0')">
+                <div class="ub-icon">&#128247;</div>
+                <div class="ub-title">Click to upload banner image</div>
+                <div class="ub-hint">Recommended: 1920 × 800px &middot; JPG or PNG &middot; Max 10MB</div>
+                <div class="upload-progress" id="up-slide0-prog"><div class="upload-progress-bar" id="up-slide0-bar"></div></div>
+                <div class="upload-status" id="up-slide0-status"></div>
+              </div>
+              <input type="hidden" id="cv-slide0Img"/>
+              <div class="upload-preview" id="up-slide0"><img/></div>
+            </div>
+            <div class="fg"><label class="flbl">Small Label Above Title</label><input type="text" class="fi" id="cv-hero0Eyebrow" placeholder="e.g. New Collection · 2025"/></div>
+            <div class="fg"><label class="flbl">Button Text</label><input type="text" class="fi" id="cv-hero0Btn" placeholder="e.g. Shop Now"/></div>
+            <div class="fg full"><label class="flbl">Main Headline</label><input type="text" class="fi" id="cv-hero0Title" placeholder="e.g. Discover Luxury Fashion &amp; Style"/></div>
+            <div class="fg full"><label class="flbl">Subtitle</label><textarea class="ft" id="cv-hero0Sub" rows="2" placeholder="e.g. Curated pieces for those who demand nothing but the extraordinary."></textarea></div>
+          </div>
+        </div>
+        <div class="ss">
+          <h3>&#127916; Hero Banner — Slide 2 <span class="size-badge">1920 × 800px</span></h3>
+          <div class="fgrid">
+            <div class="fg full">
+              <label class="flbl">Background Image</label>
+              <div class="upload-box" onclick="document.getElementById('ub-slide1').click()">
+                <input type="file" id="ub-slide1" accept="image/*" style="display:none" onchange="uploadContent(this,'cv-slide1Img','up-slide1')">
+                <div class="ub-icon">&#128247;</div><div class="ub-title">Click to upload</div><div class="ub-hint">1920 × 800px recommended</div>
+                <div class="upload-progress" id="up-slide1-prog"><div class="upload-progress-bar" id="up-slide1-bar"></div></div>
+                <div class="upload-status" id="up-slide1-status"></div>
+              </div>
+              <input type="hidden" id="cv-slide1Img"/>
+              <div class="upload-preview" id="up-slide1"><img/></div>
+            </div>
+            <div class="fg"><label class="flbl">Label Above Title</label><input type="text" class="fi" id="cv-hero1Eyebrow" placeholder="e.g. Limited Edition"/></div>
+            <div class="fg full"><label class="flbl">Main Headline</label><input type="text" class="fi" id="cv-hero1Title" placeholder="e.g. Exclusive Jewellery"/></div>
+            <div class="fg full"><label class="flbl">Subtitle</label><textarea class="ft" id="cv-hero1Sub" rows="2" placeholder="Slide 2 description..."></textarea></div>
+          </div>
+        </div>
+        <div class="ss">
+          <h3>&#127916; Hero Banner — Slide 3 <span class="size-badge">1920 × 800px</span></h3>
+          <div class="fgrid">
+            <div class="fg full">
+              <label class="flbl">Background Image</label>
+              <div class="upload-box" onclick="document.getElementById('ub-slide2').click()">
+                <input type="file" id="ub-slide2" accept="image/*" style="display:none" onchange="uploadContent(this,'cv-slide2Img','up-slide2')">
+                <div class="ub-icon">&#128247;</div><div class="ub-title">Click to upload</div><div class="ub-hint">1920 × 800px recommended</div>
+                <div class="upload-progress" id="up-slide2-prog"><div class="upload-progress-bar" id="up-slide2-bar"></div></div>
+                <div class="upload-status" id="up-slide2-status"></div>
+              </div>
+              <input type="hidden" id="cv-slide2Img"/>
+              <div class="upload-preview" id="up-slide2"><img/></div>
+            </div>
+            <div class="fg"><label class="flbl">Label Above Title</label><input type="text" class="fi" id="cv-hero2Eyebrow" placeholder="e.g. Summer Sale"/></div>
+            <div class="fg full"><label class="flbl">Main Headline</label><input type="text" class="fi" id="cv-hero2Title" placeholder="e.g. Premium Fashion"/></div>
+            <div class="fg full"><label class="flbl">Subtitle</label><textarea class="ft" id="cv-hero2Sub" rows="2" placeholder="Slide 3 description..."></textarea></div>
+          </div>
+        </div>
+        <div class="ss">
+          <h3>&#128247; Category Banners <span class="size-badge">600 × 400px each</span></h3>
+          <div class="desc">The 3 category cards on the homepage. Upload image + edit title and subtitle.</div>
+          <div class="fgrid">
+            <div class="fg full"><label class="flbl">Category 1 — Image</label>
+              <div class="upload-box" onclick="document.getElementById('ub-cat1').click()">
+                <input type="file" id="ub-cat1" accept="image/*" style="display:none" onchange="uploadContent(this,'cv-catBg1','up-cat1')">
+                <div class="ub-icon">&#128247;</div><div class="ub-title">Upload Category 1 Image</div><div class="ub-hint">600 × 400px recommended</div>
+                <div class="upload-progress" id="up-cat1-prog"><div class="upload-progress-bar" id="up-cat1-bar"></div></div>
+                <div class="upload-status" id="up-cat1-status"></div>
+              </div>
+              <input type="hidden" id="cv-catBg1"/>
+              <div class="upload-preview" id="up-cat1"><img/></div>
+            </div>
+            <div class="fg"><label class="flbl">Category 1 Title</label><input type="text" class="fi" id="cv-catTitle1" placeholder="e.g. Bags &amp; Handbags"/></div>
+            <div class="fg"><label class="flbl">Category 1 Subtitle</label><input type="text" class="fi" id="cv-catSub1" placeholder="e.g. New Season Collection"/></div>
+            <div class="fg full"><label class="flbl">Category 2 — Image</label>
+              <div class="upload-box" onclick="document.getElementById('ub-cat2').click()">
+                <input type="file" id="ub-cat2" accept="image/*" style="display:none" onchange="uploadContent(this,'cv-catBg2','up-cat2')">
+                <div class="ub-icon">&#128247;</div><div class="ub-title">Upload Category 2 Image</div><div class="ub-hint">600 × 400px recommended</div>
+                <div class="upload-progress" id="up-cat2-prog"><div class="upload-progress-bar" id="up-cat2-bar"></div></div>
+                <div class="upload-status" id="up-cat2-status"></div>
+              </div>
+              <input type="hidden" id="cv-catBg2"/>
+              <div class="upload-preview" id="up-cat2"><img/></div>
+            </div>
+            <div class="fg"><label class="flbl">Category 2 Title</label><input type="text" class="fi" id="cv-catTitle2" placeholder="e.g. Jewellery"/></div>
+            <div class="fg"><label class="flbl">Category 2 Subtitle</label><input type="text" class="fi" id="cv-catSub2" placeholder="e.g. Gold &amp; Silver Pieces"/></div>
+            <div class="fg full"><label class="flbl">Category 3 — Image</label>
+              <div class="upload-box" onclick="document.getElementById('ub-cat3').click()">
+                <input type="file" id="ub-cat3" accept="image/*" style="display:none" onchange="uploadContent(this,'cv-catBg3','up-cat3')">
+                <div class="ub-icon">&#128247;</div><div class="ub-title">Upload Category 3 Image</div><div class="ub-hint">600 × 400px recommended</div>
+                <div class="upload-progress" id="up-cat3-prog"><div class="upload-progress-bar" id="up-cat3-bar"></div></div>
+                <div class="upload-status" id="up-cat3-status"></div>
+              </div>
+              <input type="hidden" id="cv-catBg3"/>
+              <div class="upload-preview" id="up-cat3"><img/></div>
+            </div>
+            <div class="fg"><label class="flbl">Category 3 Title</label><input type="text" class="fi" id="cv-catTitle3" placeholder="e.g. Women's Fashion"/></div>
+            <div class="fg"><label class="flbl">Category 3 Subtitle</label><input type="text" class="fi" id="cv-catSub3" placeholder="e.g. Latest Styles"/></div>
+          </div>
+        </div>
+        <div class="ss">
+          <h3>&#128172; Testimonials / Reviews</h3>
+          <div class="fgrid">
+            <div class="fg"><label class="flbl">Review 1 — Initials (Avatar)</label><input type="text" class="fi" id="cv-review1Avatar" placeholder="e.g. SM" maxlength="2"/></div>
+            <div class="fg"><label class="flbl">Review 1 — Name</label><input type="text" class="fi" id="cv-review1Name" placeholder="e.g. Sophie M."/></div>
+            <div class="fg"><label class="flbl">Review 1 — Location</label><input type="text" class="fi" id="cv-review1Loc" placeholder="e.g. London, UK 🇬🇧"/></div>
+            <div class="fg full"><label class="flbl">Review 1 — Text</label><textarea class="ft" id="cv-review1Text" rows="2" placeholder="Review text..."></textarea></div>
+            <div class="fg"><label class="flbl">Review 2 — Initials</label><input type="text" class="fi" id="cv-review2Avatar" placeholder="e.g. JR" maxlength="2"/></div>
+            <div class="fg"><label class="flbl">Review 2 — Name</label><input type="text" class="fi" id="cv-review2Name" placeholder="e.g. James R."/></div>
+            <div class="fg"><label class="flbl">Review 2 — Location</label><input type="text" class="fi" id="cv-review2Loc" placeholder="e.g. New York, USA 🇺🇸"/></div>
+            <div class="fg full"><label class="flbl">Review 2 — Text</label><textarea class="ft" id="cv-review2Text" rows="2" placeholder="Review text..."></textarea></div>
+            <div class="fg"><label class="flbl">Review 3 — Initials</label><input type="text" class="fi" id="cv-review3Avatar" placeholder="e.g. AC" maxlength="2"/></div>
+            <div class="fg"><label class="flbl">Review 3 — Name</label><input type="text" class="fi" id="cv-review3Name" placeholder="e.g. Amara C."/></div>
+            <div class="fg"><label class="flbl">Review 3 — Location</label><input type="text" class="fi" id="cv-review3Loc" placeholder="e.g. Dubai, UAE 🇦🇪"/></div>
+            <div class="fg full"><label class="flbl">Review 3 — Text</label><textarea class="ft" id="cv-review3Text" rows="2" placeholder="Review text..."></textarea></div>
+          </div>
+        </div>
+        <div class="ss">
+          <h3>&#128140; Newsletter Section</h3>
+          <div class="fgrid">
+            <div class="fg"><label class="flbl">Label</label><input type="text" class="fi" id="cv-nlLabel" placeholder="e.g. Join the Inner Circle"/></div>
+            <div class="fg full"><label class="flbl">Title</label><input type="text" class="fi" id="cv-nlTitle" placeholder="e.g. Get 20% Off Your First Order"/></div>
+            <div class="fg full"><label class="flbl">Subtitle</label><textarea class="ft" id="cv-nlSub" rows="2" placeholder="Sign up for exclusive access..."></textarea></div>
+          </div>
+        </div>
+        <div class="ss">
+          <h3>&#127988; Section Labels &amp; Titles</h3>
+          <div class="fgrid">
+            <div class="fg"><label class="flbl">Featured Products Label</label><input type="text" class="fi" id="cv-featLabel" placeholder="Hand-picked for You"/></div>
+            <div class="fg"><label class="flbl">Featured Products Title</label><input type="text" class="fi" id="cv-featTitle" placeholder="Featured Products"/></div>
+            <div class="fg"><label class="flbl">New Arrivals Label</label><input type="text" class="fi" id="cv-newLabel" placeholder="Just In"/></div>
+            <div class="fg"><label class="flbl">New Arrivals Title</label><input type="text" class="fi" id="cv-newTitle" placeholder="New Arrivals"/></div>
+            <div class="fg"><label class="flbl">Category Section Label</label><input type="text" class="fi" id="cv-catLabel" placeholder="Browse by Category"/></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SHOP TAB -->
+      <div class="ctab-panel" id="ctab-shop">
+        <div class="ss">
+          <h3>&#128247; Shop Page Banner <span class="size-badge">1920 × 400px</span></h3>
+          <div class="fgrid">
+            <div class="fg full">
+              <label class="flbl">Banner Background Image</label>
+              <div class="upload-box" onclick="document.getElementById('ub-shopBanner').click()">
+                <input type="file" id="ub-shopBanner" accept="image/*" style="display:none" onchange="uploadContent(this,'cv-shopBannerImg','up-shopBanner')">
+                <div class="ub-icon">&#128247;</div><div class="ub-title">Click to upload shop banner</div><div class="ub-hint">Recommended: 1920 × 400px</div>
+                <div class="upload-progress" id="up-shopBanner-prog"><div class="upload-progress-bar" id="up-shopBanner-bar"></div></div>
+                <div class="upload-status" id="up-shopBanner-status"></div>
+              </div>
+              <input type="hidden" id="cv-shopBannerImg"/>
+              <div class="upload-preview" id="up-shopBanner"><img/></div>
+            </div>
+            <div class="fg"><label class="flbl">Small Label</label><input type="text" class="fi" id="cv-shopEyebrow" placeholder="e.g. Luxury Dropshipping Store"/></div>
+            <div class="fg full"><label class="flbl">Banner Title</label><input type="text" class="fi" id="cv-shopTitle" placeholder="e.g. Shop All Products"/></div>
+            <div class="fg full"><label class="flbl">Banner Subtitle</label><input type="text" class="fi" id="cv-shopSub" placeholder="e.g. Curated luxury pieces..."/></div>
+          </div>
+        </div>
+        <div class="ss">
+          <h3>&#127988; Category Tabs</h3>
+          <div class="desc">The category filter tabs shown on the shop page. Make sure these match your product categories.</div>
+          <div class="fgrid">
+            <div class="fg"><label class="flbl">Category 1</label><input type="text" class="fi" id="cv-cat1" placeholder="Women's Fashion"/></div>
+            <div class="fg"><label class="flbl">Category 2</label><input type="text" class="fi" id="cv-cat2" placeholder="Men's Fashion"/></div>
+            <div class="fg"><label class="flbl">Category 3</label><input type="text" class="fi" id="cv-cat3" placeholder="Accessories"/></div>
+            <div class="fg"><label class="flbl">Category 4</label><input type="text" class="fi" id="cv-cat4" placeholder="Jewellery"/></div>
+            <div class="fg"><label class="flbl">Category 5</label><input type="text" class="fi" id="cv-cat5" placeholder="Bags &amp; Handbags"/></div>
+            <div class="fg"><label class="flbl">Category 6</label><input type="text" class="fi" id="cv-cat6" placeholder="Footwear"/></div>
+            <div class="fg"><label class="flbl">Category 7</label><input type="text" class="fi" id="cv-cat7" placeholder="Beauty"/></div>
+            <div class="fg"><label class="flbl">Category 8</label><input type="text" class="fi" id="cv-cat8" placeholder="(optional)"/></div>
+          </div>
+        </div>
+        <div class="ss">
+          <h3>&#128230; Promo Strip Text</h3>
+          <div class="fgrid">
+            <div class="fg"><label class="flbl">Strip 1 Title</label><input type="text" class="fi" id="cv-promo1Title" placeholder="Free Shipping"/></div>
+            <div class="fg"><label class="flbl">Strip 1 Subtitle</label><input type="text" class="fi" id="cv-promo1Sub" placeholder="On every order"/></div>
+            <div class="fg"><label class="flbl">Strip 2 Title</label><input type="text" class="fi" id="cv-promo2Title" placeholder="Secure PayPal"/></div>
+            <div class="fg"><label class="flbl">Strip 2 Subtitle</label><input type="text" class="fi" id="cv-promo2Sub" placeholder="Buyer protection"/></div>
+            <div class="fg"><label class="flbl">Strip 3 Title</label><input type="text" class="fi" id="cv-promo3Title" placeholder="30-Day Returns"/></div>
+            <div class="fg"><label class="flbl">Strip 3 Subtitle</label><input type="text" class="fi" id="cv-promo3Sub" placeholder="No questions asked"/></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUCT TAB -->
+      <div class="ctab-panel" id="ctab-product">
+        <div class="ss">
+          <h3>&#128274; Trust Badges (shown on every product page)</h3>
+          <div class="fgrid">
+            <div class="fg"><label class="flbl">Badge 1 Icon (emoji)</label><input type="text" class="fi" id="cv-trust1Icon" placeholder="🚚"/></div>
+            <div class="fg"><label class="flbl">Badge 1 Title</label><input type="text" class="fi" id="cv-trust1Title" placeholder="Free Shipping"/></div>
+            <div class="fg full"><label class="flbl">Badge 1 Subtitle</label><input type="text" class="fi" id="cv-trust1Sub" placeholder="Worldwide delivery"/></div>
+            <div class="fg"><label class="flbl">Badge 2 Icon (emoji)</label><input type="text" class="fi" id="cv-trust2Icon" placeholder="↩️"/></div>
+            <div class="fg"><label class="flbl">Badge 2 Title</label><input type="text" class="fi" id="cv-trust2Title" placeholder="30-Day Returns"/></div>
+            <div class="fg full"><label class="flbl">Badge 2 Subtitle</label><input type="text" class="fi" id="cv-trust2Sub" placeholder="Hassle-free"/></div>
+            <div class="fg"><label class="flbl">Badge 3 Icon (emoji)</label><input type="text" class="fi" id="cv-trust3Icon" placeholder="🔒"/></div>
+            <div class="fg"><label class="flbl">Badge 3 Title</label><input type="text" class="fi" id="cv-trust3Title" placeholder="Secure Pay"/></div>
+            <div class="fg full"><label class="flbl">Badge 3 Subtitle</label><input type="text" class="fi" id="cv-trust3Sub" placeholder="PayPal protected"/></div>
+          </div>
+        </div>
+        <div class="ss">
+          <h3>&#128172; Related Products Section</h3>
+          <div class="fgrid">
+            <div class="fg full"><label class="flbl">Section Title</label><input type="text" class="fi" id="cv-relatedTitle" placeholder="You May Also Like"/></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABOUT TAB -->
+      <div class="ctab-panel" id="ctab-about">
+        <div class="ss">
+          <h3>&#128247; About Page — Hero Banner <span class="size-badge">1920 × 700px</span></h3>
+          <div class="fgrid">
+            <div class="fg full">
+              <label class="flbl">Hero Background Image</label>
+              <div class="upload-box" onclick="document.getElementById('ub-aboutHero').click()">
+                <input type="file" id="ub-aboutHero" accept="image/*" style="display:none" onchange="uploadContent(this,'cv-aboutHeroBanner','up-aboutHero')">
+                <div class="ub-icon">&#128247;</div><div class="ub-title">Click to upload about page hero</div><div class="ub-hint">Recommended: 1920 × 700px</div>
+                <div class="upload-progress" id="up-aboutHero-prog"><div class="upload-progress-bar" id="up-aboutHero-bar"></div></div>
+                <div class="upload-status" id="up-aboutHero-status"></div>
+              </div>
+              <input type="hidden" id="cv-aboutHeroBanner"/>
+              <div class="upload-preview" id="up-aboutHero"><img/></div>
+            </div>
+            <div class="fg"><label class="flbl">Eyebrow Text</label><input type="text" class="fi" id="cv-aboutEyebrow" placeholder="Our Story"/></div>
+            <div class="fg full"><label class="flbl">Hero Title</label><input type="text" class="fi" id="cv-aboutHeroTitle" placeholder="Born from a passion..."/></div>
+          </div>
+        </div>
+        <div class="ss">
+          <h3>&#128247; Hero Side Images (3 small images) <span class="size-badge">600 × 400px</span></h3>
+          <div class="fgrid">
+            <div class="fg full">
+              <label class="flbl">Image 1</label>
+              <div class="upload-box" onclick="document.getElementById('ub-aboutImg1').click()">
+                <input type="file" id="ub-aboutImg1" accept="image/*" style="display:none" onchange="uploadContent(this,'cv-aboutImg1','up-aboutImg1')">
+                <div class="ub-icon">&#128247;</div><div class="ub-title">Click to upload</div><div class="ub-hint">600 × 400px</div>
+                <div class="upload-progress" id="up-aboutImg1-prog"><div class="upload-progress-bar" id="up-aboutImg1-bar"></div></div>
+                <div class="upload-status" id="up-aboutImg1-status"></div>
+              </div>
+              <input type="hidden" id="cv-aboutImg1"/>
+              <div class="upload-preview" id="up-aboutImg1"><img/></div>
+            </div>
+            <div class="fg full">
+              <label class="flbl">Image 2</label>
+              <div class="upload-box" onclick="document.getElementById('ub-aboutImg2').click()">
+                <input type="file" id="ub-aboutImg2" accept="image/*" style="display:none" onchange="uploadContent(this,'cv-aboutImg2','up-aboutImg2')">
+                <div class="ub-icon">&#128247;</div><div class="ub-title">Click to upload</div><div class="ub-hint">600 × 400px</div>
+                <div class="upload-progress" id="up-aboutImg2-prog"><div class="upload-progress-bar" id="up-aboutImg2-bar"></div></div>
+                <div class="upload-status" id="up-aboutImg2-status"></div>
+              </div>
+              <input type="hidden" id="cv-aboutImg2"/>
+              <div class="upload-preview" id="up-aboutImg2"><img/></div>
+            </div>
+            <div class="fg full">
+              <label class="flbl">Image 3</label>
+              <div class="upload-box" onclick="document.getElementById('ub-aboutImg3').click()">
+                <input type="file" id="ub-aboutImg3" accept="image/*" style="display:none" onchange="uploadContent(this,'cv-aboutImg3','up-aboutImg3')">
+                <div class="ub-icon">&#128247;</div><div class="ub-title">Click to upload</div><div class="ub-hint">600 × 400px</div>
+                <div class="upload-progress" id="up-aboutImg3-prog"><div class="upload-progress-bar" id="up-aboutImg3-bar"></div></div>
+                <div class="upload-status" id="up-aboutImg3-status"></div>
+              </div>
+              <input type="hidden" id="cv-aboutImg3"/>
+              <div class="upload-preview" id="up-aboutImg3"><img/></div>
+            </div>
+          </div>
+        </div>
+        <div class="ss">
+          <h3>&#128214; Story Section</h3>
+          <div class="fgrid">
+            <div class="fg full">
+              <label class="flbl">Main Story Image <span class="size-badge">800 × 600px</span></label>
+              <div class="upload-box" onclick="document.getElementById('ub-storyImg1').click()">
+                <input type="file" id="ub-storyImg1" accept="image/*" style="display:none" onchange="uploadContent(this,'cv-aboutStoryImg1','up-storyImg1')">
+                <div class="ub-icon">&#128247;</div><div class="ub-title">Click to upload story image</div><div class="ub-hint">800 × 600px</div>
+                <div class="upload-progress" id="up-storyImg1-prog"><div class="upload-progress-bar" id="up-storyImg1-bar"></div></div>
+                <div class="upload-status" id="up-storyImg1-status"></div>
+              </div>
+              <input type="hidden" id="cv-aboutStoryImg1"/>
+              <div class="upload-preview" id="up-storyImg1"><img/></div>
+            </div>
+            <div class="fg full">
+              <label class="flbl">Accent Story Image <span class="size-badge">400 × 300px</span></label>
+              <div class="upload-box" onclick="document.getElementById('ub-storyImg2').click()">
+                <input type="file" id="ub-storyImg2" accept="image/*" style="display:none" onchange="uploadContent(this,'cv-aboutStoryImg2','up-storyImg2')">
+                <div class="ub-icon">&#128247;</div><div class="ub-title">Click to upload accent image</div><div class="ub-hint">400 × 300px</div>
+                <div class="upload-progress" id="up-storyImg2-prog"><div class="upload-progress-bar" id="up-storyImg2-bar"></div></div>
+                <div class="upload-status" id="up-storyImg2-status"></div>
+              </div>
+              <input type="hidden" id="cv-aboutStoryImg2"/>
+              <div class="upload-preview" id="up-storyImg2"><img/></div>
+            </div>
+            <div class="fg"><label class="flbl">Story Eyebrow</label><input type="text" class="fi" id="cv-aboutStoryEyebrow" placeholder="How It Began"/></div>
+            <div class="fg full"><label class="flbl">Story Title</label><input type="text" class="fi" id="cv-aboutStoryTitle" placeholder="A Vision for Accessible Luxury"/></div>
+            <div class="fg"><label class="flbl">Story Badge / Quote</label><input type="text" class="fi" id="cv-aboutStoryBadge" placeholder='"Crafted with purpose."'/></div>
+          </div>
+        </div>
+        <div class="ss">
+          <h3>&#128200; Numbers / Stats</h3>
+          <div class="fgrid">
+            <div class="fg"><label class="flbl">Number 1 Label</label><input type="text" class="fi" id="cv-num1Label" placeholder="Products Curated"/></div>
+            <div class="fg"><label class="flbl">Number 2 Label</label><input type="text" class="fi" id="cv-num2Label" placeholder="Happy Customers"/></div>
+            <div class="fg"><label class="flbl">Number 3 Label</label><input type="text" class="fi" id="cv-num3Label" placeholder="Countries Delivered"/></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACT TAB -->
+      <div class="ctab-panel" id="ctab-contact">
+        <div class="ss">
+          <h3>&#128247; Contact Page Banner <span class="size-badge">1920 × 500px</span></h3>
+          <div class="fgrid">
+            <div class="fg full">
+              <label class="flbl">Hero Background Image</label>
+              <div class="upload-box" onclick="document.getElementById('ub-contactHero').click()">
+                <input type="file" id="ub-contactHero" accept="image/*" style="display:none" onchange="uploadContent(this,'cv-contactHeroBanner','up-contactHero')">
+                <div class="ub-icon">&#128247;</div><div class="ub-title">Click to upload contact banner</div><div class="ub-hint">1920 × 500px recommended</div>
+                <div class="upload-progress" id="up-contactHero-prog"><div class="upload-progress-bar" id="up-contactHero-bar"></div></div>
+                <div class="upload-status" id="up-contactHero-status"></div>
+              </div>
+              <input type="hidden" id="cv-contactHeroBanner"/>
+              <div class="upload-preview" id="up-contactHero"><img/></div>
+            </div>
+            <div class="fg"><label class="flbl">Eyebrow Text</label><input type="text" class="fi" id="cv-contactEyebrow" placeholder="Get In Touch"/></div>
+            <div class="fg full"><label class="flbl">Hero Title</label><input type="text" class="fi" id="cv-contactHeroTitle" placeholder="We'd Love to Hear from You"/></div>
+          </div>
+        </div>
+        <div class="ss">
+          <h3>&#128222; Contact Information</h3>
+          <div class="fgrid">
+            <div class="fg"><label class="flbl">Email Address</label><input type="email" class="fi" id="cv-contactEmail" placeholder="support@quravio.com"/></div>
+            <div class="fg"><label class="flbl">WhatsApp Number</label><input type="text" class="fi" id="cv-contactWhatsapp" placeholder="+60 12-345 6789"/></div>
+            <div class="fg"><label class="flbl">Phone Number</label><input type="text" class="fi" id="cv-contactPhone" placeholder="+60 3-1234 5678"/></div>
+          </div>
+        </div>
+        <div class="ss">
+          <h3>&#128205; Office 1</h3>
+          <div class="fgrid">
+            <div class="fg full">
+              <label class="flbl">Office Photo <span class="size-badge">800 × 400px</span></label>
+              <div class="upload-box" onclick="document.getElementById('ub-office1').click()">
+                <input type="file" id="ub-office1" accept="image/*" style="display:none" onchange="uploadContent(this,'cv-office1BgImg','up-office1')">
+                <div class="ub-icon">&#128247;</div><div class="ub-title">Upload office photo</div><div class="ub-hint">800 × 400px</div>
+                <div class="upload-progress" id="up-office1-prog"><div class="upload-progress-bar" id="up-office1-bar"></div></div>
+                <div class="upload-status" id="up-office1-status"></div>
+              </div>
+              <input type="hidden" id="cv-office1BgImg"/>
+              <div class="upload-preview" id="up-office1"><img/></div>
+            </div>
+            <div class="fg"><label class="flbl">City Name</label><input type="text" class="fi" id="cv-office1City" placeholder="Kuala Lumpur"/></div>
+            <div class="fg"><label class="flbl">Role / Description</label><input type="text" class="fi" id="cv-office1Role" placeholder="Global Headquarters"/></div>
+            <div class="fg full"><label class="flbl">Full Address</label><input type="text" class="fi" id="cv-office1Addr" placeholder="Level 28, Menara Quravio, KL"/></div>
+          </div>
+        </div>
+        <div class="ss">
+          <h3>&#128205; Office 2</h3>
+          <div class="fgrid">
+            <div class="fg full">
+              <label class="flbl">Office Photo <span class="size-badge">800 × 400px</span></label>
+              <div class="upload-box" onclick="document.getElementById('ub-office2').click()">
+                <input type="file" id="ub-office2" accept="image/*" style="display:none" onchange="uploadContent(this,'cv-office2BgImg','up-office2')">
+                <div class="ub-icon">&#128247;</div><div class="ub-title">Upload office photo</div><div class="ub-hint">800 × 400px</div>
+                <div class="upload-progress" id="up-office2-prog"><div class="upload-progress-bar" id="up-office2-bar"></div></div>
+                <div class="upload-status" id="up-office2-status"></div>
+              </div>
+              <input type="hidden" id="cv-office2BgImg"/>
+              <div class="upload-preview" id="up-office2"><img/></div>
+            </div>
+            <div class="fg"><label class="flbl">City Name</label><input type="text" class="fi" id="cv-office2City" placeholder="London"/></div>
+            <div class="fg"><label class="flbl">Role / Description</label><input type="text" class="fi" id="cv-office2Role" placeholder="European Operations"/></div>
+            <div class="fg full"><label class="flbl">Full Address</label><input type="text" class="fi" id="cv-office2Addr" placeholder="4th Floor, The Luxury Hub, London"/></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTER TAB -->
+      <div class="ctab-panel" id="ctab-footer">
+        <div class="ss">
+          <h3>&#128196; Footer Text</h3>
+          <div class="fgrid">
+            <div class="fg full"><label class="flbl">Footer Description (under logo)</label><textarea class="ft" id="cv-footerDesc" rows="3" placeholder="Luxury · Refined · Unique. Curated pieces for those who demand nothing but the extraordinary."></textarea></div>
+            <div class="fg full"><label class="flbl">Copyright Text</label><input type="text" class="fi" id="cv-footerCopy" placeholder="© 2025 Quravio.com — All rights reserved."/></div>
+          </div>
+        </div>
+        <div class="ss">
+          <h3>&#127760; Social Media Links</h3>
+          <div class="desc">Paste your full social media URLs. Toggle ON/OFF to show or hide on your website.</div>
+          <div class="soc-row">
+            <div class="soc-row-head">
+              <div class="soc-row-left"><span class="soc-icon">&#128247;</span><div><div class="soc-name">Instagram</div><div class="soc-sub">Show in footer</div></div></div>
+              <label class="toggle"><input type="checkbox" id="cv-showIg" checked><div class="toggle-slider"></div></label>
+            </div>
+            <input type="url" class="fi" id="cv-socialIg" placeholder="https://instagram.com/yourhandle"/>
+          </div>
+          <div class="soc-row">
+            <div class="soc-row-head">
+              <div class="soc-row-left"><span class="soc-icon">&#128100;</span><div><div class="soc-name">Facebook</div><div class="soc-sub">Show in footer</div></div></div>
+              <label class="toggle"><input type="checkbox" id="cv-showFb" checked><div class="toggle-slider"></div></label>
+            </div>
+            <input type="url" class="fi" id="cv-socialFb" placeholder="https://facebook.com/yourpage"/>
+          </div>
+          <div class="soc-row">
+            <div class="soc-row-head">
+              <div class="soc-row-left"><span class="soc-icon">&#128038;</span><div><div class="soc-name">Twitter / X</div><div class="soc-sub">Show in footer</div></div></div>
+              <label class="toggle"><input type="checkbox" id="cv-showTw"><div class="toggle-slider"></div></label>
+            </div>
+            <input type="url" class="fi" id="cv-socialTw" placeholder="https://twitter.com/yourhandle"/>
+          </div>
+          <div class="soc-row">
+            <div class="soc-row-head">
+              <div class="soc-row-left"><span class="soc-icon">&#127909;</span><div><div class="soc-name">YouTube</div><div class="soc-sub">Show in footer</div></div></div>
+              <label class="toggle"><input type="checkbox" id="cv-showYt"><div class="toggle-slider"></div></label>
+            </div>
+            <input type="url" class="fi" id="cv-socialYt" placeholder="https://youtube.com/yourchannel"/>
+          </div>
+          <div class="soc-row">
+            <div class="soc-row-head">
+              <div class="soc-row-left"><span class="soc-icon">&#128241;</span><div><div class="soc-name">TikTok</div><div class="soc-sub">Show in footer &amp; contact page</div></div></div>
+              <label class="toggle"><input type="checkbox" id="cv-showTt" checked><div class="toggle-slider"></div></label>
+            </div>
+            <input type="url" class="fi" id="cv-socialTt" placeholder="https://tiktok.com/@yourhandle"/>
+          </div>
+          <div class="soc-row">
+            <div class="soc-row-head">
+              <div class="soc-row-left"><span class="soc-icon">&#128172;</span><div><div class="soc-name">WhatsApp</div><div class="soc-sub">Show in footer &amp; contact page</div></div></div>
+              <label class="toggle"><input type="checkbox" id="cv-showWa" checked><div class="toggle-slider"></div></label>
+            </div>
+            <input type="url" class="fi" id="cv-socialWa" placeholder="https://wa.me/601234567890"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- SAVE BAR -->
+      <div class="save-bar">
+        <button class="btnp gld" onclick="saveAllContent()">&#10003; Save All Changes — Goes Live Instantly</button>
+        <span class="save-msg" id="save-msg">&#10003; Saved! Changes are now live on your website.</span>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <div class="phdr"><div class="pht"><h1>Settings</h1><p>Configure PayPal and store preferences.</p></div></div>
+      <div class="ss">
+        <h3>&#128371;&#65039; PayPal Configuration</h3>
+        <div class="desc">Enter your PayPal client ID to enable real payments. Get it from <a href="https://developer.paypal.com" target="_blank" style="color:var(--navy)">developer.paypal.com</a></div>
+        <div class="fgrid">
+          <div class="fg full"><label class="flbl">PayPal Client ID</label><input type="text" class="fi" id="s-paypalClientId" placeholder="AXxx..."/></div>
+          <div class="fg"><label class="flbl">Currency</label>
+            <select class="fi" id="s-paypalCurrency">
+              <option value="USD">USD — US Dollar</option>
+              <option value="MYR">MYR — Malaysian Ringgit</option>
+              <option value="GBP">GBP — British Pound</option>
+              <option value="EUR">EUR — Euro</option>
+              <option value="AUD">AUD — Australian Dollar</option>
+              <option value="SGD">SGD — Singapore Dollar</option>
+            </select>
+          </div>
+        </div>
+        <button class="btnp navy" style="margin-top:1rem" onclick="savePaypal()">Save PayPal Settings</button>
+      </div>
+      <div class="ss">
+        <h3>&#128274; Change Admin Password</h3>
+        <div class="fgrid">
+          <div class="fg"><label class="flbl">New Username</label><input type="text" class="fi" id="s-newUser" placeholder="admin"/></div>
+          <div class="fg"><label class="flbl">New Password</label><input type="password" class="fi" id="s-newPass" placeholder="New password"/></div>
+        </div>
+        <button class="btnp navy" style="margin-top:1rem" onclick="saveCreds()">Save Credentials</button>
+        <div style="margin-top:8px;font-size:0.75rem;color:var(--t4)">Default login: admin / quravio2024</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc,
+         doc, query, where, orderBy, serverTimestamp, limit }
+  from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyAbE76HZVyfiVw0SyHNzpAxRCeb_uLCW7Y",
+  authDomain:"quravio-store.firebaseapp.com",
+  projectId:"quravio-store",
+  storageBucket:"quravio-store.firebasestorage.app",
+  messagingSenderId:"1066738660513",
+  appId:"1:1066738660513:web:c7b54e111802d6fff5ece0"
+});
+const db = getFirestore(app);
+const CLOUD = 'dw2s0k1au';
+const PRESET = 'quravio_products';
+
+let allProds=[], allOrders=[], allCusts=[], prodImgUrls=[];
+
+// ── LOGIN ─────────────────────────────────────────
+const CREDS_KEY = 'qcreds';
+window.doLogin = function() {
+  const u = document.getElementById('lu').value.trim();
+  const p = document.getElementById('lp').value;
+  const saved = JSON.parse(localStorage.getItem(CREDS_KEY)||'{"u":"admin","p":"quravio2024"}');
+  if(u===saved.u && p===saved.p) {
+    document.getElementById('loginScreen').style.display='none';
+    loadDash();
+  } else {
+    document.getElementById('loginErr').style.display='block';
+  }
+};
+window.doLogout = function() {
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('lu').value='';
+  document.getElementById('lp').value='';
+};
+
+// ── NAV ───────────────────────────────────────────
+const T = {dashboard:'Dashboard','add-product':'Add Product',products:'All Products',orders:'Orders',customers:'Customers',inventory:'Inventory',content:'Edit Pages',settings:'Settings'};
+window.nav = function(pg) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nv').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+pg).classList.add('active');
+  document.querySelectorAll('.nv').forEach(n=>{ if(n.getAttribute('onclick')?.includes("'"+pg+"'")) n.classList.add('active'); });
+  document.getElementById('pageTitle').textContent = T[pg]||pg;
+  if(pg==='dashboard') loadDash();
+  if(pg==='products') loadProds();
+  if(pg==='orders') loadOrders();
+  if(pg==='customers') loadCusts();
+  if(pg==='inventory') loadInv();
+  if(pg==='content') loadContent();
+  if(pg==='settings') loadSettings();
+};
+
+// ── TOAST ─────────────────────────────────────────
+function toast(msg,type='ok') {
+  const t=document.createElement('div');
+  t.style.cssText=`position:fixed;bottom:24px;right:24px;background:${type==='ok'?'#059669':'#DC2626'};color:#fff;padding:12px 20px;border-radius:8px;font-size:0.82rem;font-weight:600;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.15);animation:fadein .3s`;
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),3500);
+}
+
+// ── DASHBOARD ─────────────────────────────────────
+async function loadDash() {
+  try {
+    const [ps,os,cs] = await Promise.all([
+      getDocs(query(collection(db,'products'),where('status','==','active'))),
+      getDocs(collection(db,'orders')),
+      getDocs(collection(db,'customers'))
+    ]);
+    document.getElementById('d-products').textContent = ps.size;
+    document.getElementById('d-orders').textContent = os.size;
+    document.getElementById('d-customers').textContent = cs.size;
+    const rev = os.docs.reduce((s,d)=>s+(d.data().total||0),0);
+    document.getElementById('d-revenue').textContent = '$'+rev.toFixed(2);
+    const recent = os.docs.slice(-5).reverse();
+    document.getElementById('dash-orders').innerHTML = recent.length
+      ? recent.map(d=>{const o=d.data();return `<tr>
+          <td><strong>#${o.orderNumber||'—'}</strong></td>
+          <td>${o.customerName||'—'}</td>
+          <td>${(o.items||[]).length} item(s)</td>
+          <td>$${(o.total||0).toFixed(2)}</td>
+          <td><span class="badge b-${o.status||'pending'}">${o.status||'pending'}</span></td>
+          <td>${o.createdAt?.toDate?.()?.toLocaleDateString()||'—'}</td>
+        </tr>`;}).join('')
+      : '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--t4)">No orders yet</td></tr>';
+  }catch(e){toast('Could not load dashboard','err');}
+}
+
+// ── PRODUCTS ──────────────────────────────────────
+async function loadProds() {
+  try {
+    const snap = await getDocs(collection(db,'products'));
+    allProds = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderProds(allProds);
+    document.getElementById('prod-count').textContent = `${allProds.length} products total`;
+  }catch(e){toast('Could not load products','err');}
+}
+function renderProds(prods) {
+  document.getElementById('prod-tbody').innerHTML = prods.length
+    ? prods.map(p=>`<tr>
+        <td><input type="checkbox" class="prod-cb" value="${p.id}"></td>
+        <td>${p.images&&p.images[0]?`<img src="${p.images[0]}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid var(--border)">`:''}</td>
+        <td><div style="font-weight:600">${p.name}</div><div style="font-size:0.72rem;color:var(--t3)">${p.sku||''}</div></td>
+        <td>${p.category||'—'}</td>
+        <td><strong>$${Number(p.price||0).toFixed(2)}</strong>${p.comparePrice?`<div style="font-size:0.72rem;color:var(--t4);text-decoration:line-through">$${Number(p.comparePrice).toFixed(2)}</div>`:''}</td>
+        <td>${p.stock??'—'}</td>
+        <td><span class="badge b-${p.status||'draft'}">${p.status||'draft'}</span></td>
+        <td><div class="tbl-actions">
+          <button class="ta-btn" onclick="editProd('${p.id}')">Edit</button>
+          <button class="ta-btn del" onclick="delProd('${p.id}')">Delete</button>
+        </div></td>
+      </tr>`).join('')
+    : '<tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--t4)">No products yet. <button class="ta-btn" onclick="nav(\'add-product\')">Add your first product</button></td></tr>';
+}
+window.filterProds = q => renderProds(allProds.filter(p=>p.name?.toLowerCase().includes(q.toLowerCase())||p.category?.toLowerCase().includes(q.toLowerCase())));
+window.filterProdStatus = s => renderProds(s?allProds.filter(p=>p.status===s):allProds);
+window.delProd = async id => {
+  if(!confirm('Delete this product?')) return;
+  await deleteDoc(doc(db,'products',id));
+  toast('Product deleted');
+  loadProds();
+};
+window.editProd = id => {
+  const p = allProds.find(x=>x.id===id);
+  if(!p) return;
+  nav('add-product');
+  document.getElementById('p-name').value=p.name||'';
+  document.getElementById('p-desc').value=p.description||'';
+  document.getElementById('p-cat').value=p.category||'';
+  document.getElementById('p-price').value=p.price||'';
+  document.getElementById('p-compare').value=p.comparePrice||'';
+  document.getElementById('p-stock').value=p.stock||'';
+  document.getElementById('p-status').value=p.status||'active';
+  document.getElementById('p-featured').checked=p.featured||false;
+  document.getElementById('p-sku').value=p.sku||'';
+  document.getElementById('p-supplier').value=p.supplierUrl||'';
+  prodImgUrls=p.images||[];
+  // Show existing images
+  prodImgUrls.forEach((url,i)=>{
+    const slot=document.getElementById('slot-'+i);
+    if(slot){slot.innerHTML=`<img src="${url}"><button class="del-img" onclick="removeImg(${i})">✕</button><input type="file" accept="image/*" style="display:none" id="img-file-${i}" onchange="uploadProductImg(${i},this)">`;slot.onclick=null;}
+  });
+  document.getElementById('p-name').dataset.editId=id;
+};
+window.selectAll=(cb,cls)=>document.querySelectorAll('.'+cls).forEach(c=>c.checked=cb.checked);
+
+// ── SAVE PRODUCT ──────────────────────────────────
+window.saveProduct = async function() {
+  const name=document.getElementById('p-name').value.trim();
+  const price=parseFloat(document.getElementById('p-price').value);
+  if(!name||isNaN(price)){toast('Product name and price required','err');return;}
+  const data={
+    name, price,
+    description:document.getElementById('p-desc').value,
+    category:document.getElementById('p-cat').value,
+    comparePrice:parseFloat(document.getElementById('p-compare').value)||null,
+    stock:parseInt(document.getElementById('p-stock').value)||0,
+    status:document.getElementById('p-status').value,
+    featured:document.getElementById('p-featured').checked,
+    sku:document.getElementById('p-sku').value,
+    supplierUrl:document.getElementById('p-supplier').value,
+    images:prodImgUrls.filter(Boolean),
+    updatedAt:serverTimestamp()
+  };
+  const editId=document.getElementById('p-name').dataset.editId;
+  try {
+    if(editId){await updateDoc(doc(db,'products',editId),data);toast('Product updated!');}
+    else{data.createdAt=serverTimestamp();await addDoc(collection(db,'products'),data);toast('Product saved!');}
+    clearProdForm();nav('products');
+  }catch(e){toast('Save failed: '+e.message,'err');}
+};
+window.clearProdForm=function(){
+  ['p-name','p-desc','p-sku','p-price','p-compare','p-cost','p-stock','p-tags','p-weight','p-supplier'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('p-featured').checked=false;
+  document.getElementById('p-name').dataset.editId='';
+  prodImgUrls=[];
+  for(let i=0;i<6;i++){
+    const s=document.getElementById('slot-'+i);
+    if(s){s.innerHTML=`<input type="file" accept="image/*" style="display:none" id="img-file-${i}" onchange="uploadProductImg(${i},this)"><div class="add-ico">${i===0?'📷<div style="font-size:0.65rem;color:var(--t4);margin-top:4px">Main Photo</div>':'+'}</div>`;s.onclick=()=>triggerImgUpload(i);}
+  }
+};
+window.triggerImgUpload=i=>document.getElementById('img-file-'+i).click();
+window.removeImg=(i)=>{prodImgUrls[i]=null;const s=document.getElementById('slot-'+i);if(s){s.innerHTML=`<input type="file" accept="image/*" style="display:none" id="img-file-${i}" onchange="uploadProductImg(${i},this)"><div class="add-ico">+</div>`;s.onclick=()=>triggerImgUpload(i);}};
+window.uploadProductImg=async function(i,input){
+  const file=input.files[0];if(!file)return;
+  const status=document.getElementById('img-upload-status');
+  if(status)status.textContent=`Uploading image ${i+1}...`;
+  const fd=new FormData();fd.append('file',file);fd.append('upload_preset',PRESET);fd.append('folder','quravio_products');
+  const res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD}/image/upload`,{method:'POST',body:fd});
+  const r=await res.json();
+  if(r.secure_url){
+    prodImgUrls[i]=r.secure_url;
+    const slot=document.getElementById('slot-'+i);
+    if(slot){slot.innerHTML=`<img src="${r.secure_url}"><button class="del-img" onclick="removeImg(${i})">✕</button><input type="file" accept="image/*" style="display:none" id="img-file-${i}" onchange="uploadProductImg(${i},this)">`;slot.onclick=null;}
+    if(status)status.textContent=`Image ${i+1} uploaded!`;
+  }else{toast('Image upload failed','err');}
+};
+
+// ── ORDERS ────────────────────────────────────────
+async function loadOrders() {
+  try {
+    const snap=await getDocs(collection(db,'orders'));
+    allOrders=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderOrders(allOrders);
+    document.getElementById('order-count').textContent=`${allOrders.length} orders total`;
+  }catch(e){toast('Could not load orders','err');}
+}
+function renderOrders(orders) {
+  document.getElementById('orders-tbody').innerHTML=orders.length
+    ?orders.map(o=>`<tr>
+        <td><strong>#${o.orderNumber||'—'}</strong></td>
+        <td><div>${o.customerName||'—'}</div><div style="font-size:0.72rem;color:var(--t3)">${o.customerEmail||''}</div></td>
+        <td>${(o.items||[]).length} item(s)</td>
+        <td><strong>$${(o.total||0).toFixed(2)}</strong></td>
+        <td>${o.paymentMethod||'PayPal'}</td>
+        <td><select class="fi" style="width:130px" onchange="updOrder('${o.id}',this.value)">
+          <option ${o.status==='pending'?'selected':''} value="pending">Pending</option>
+          <option ${o.status==='processing'?'selected':''} value="processing">Processing</option>
+          <option ${o.status==='shipped'?'selected':''} value="shipped">Shipped</option>
+          <option ${o.status==='delivered'?'selected':''} value="delivered">Delivered</option>
+        </select></td>
+        <td style="font-size:0.78rem">${o.createdAt?.toDate?.()?.toLocaleDateString()||'—'}</td>
+        <td><button class="ta-btn" onclick="viewOrder('${o.id}')">View</button></td>
+      </tr>`).join('')
+    :'<tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--t4)">No orders yet</td></tr>';
+}
+window.updOrder=async(id,status)=>{await updateDoc(doc(db,'orders',id),{status});toast('Order updated!');};
+window.viewOrder=id=>{const o=allOrders.find(x=>x.id===id);if(!o)return;alert(`Order #${o.orderNumber}\n\nCustomer: ${o.customerName}\nEmail: ${o.customerEmail}\nAddress: ${o.shippingAddress}\n\nItems:\n${(o.items||[]).map(i=>`- ${i.name} x${i.qty} = $${(i.price*i.qty).toFixed(2)}`).join('\n')}\n\nSubtotal: $${(o.subtotal||0).toFixed(2)}\nShipping: $${(o.shipping||0).toFixed(2)}\nTotal: $${(o.total||0).toFixed(2)}\n\nNotes: ${o.notes||'None'}`);};
+window.filterOrders=q=>renderOrders(allOrders.filter(o=>o.orderNumber?.includes(q)||o.customerName?.toLowerCase().includes(q.toLowerCase())||o.customerEmail?.toLowerCase().includes(q.toLowerCase())));
+window.filterOrderStatus=s=>renderOrders(s?allOrders.filter(o=>o.status===s):allOrders);
+
+// ── CUSTOMERS ─────────────────────────────────────
+async function loadCusts() {
+  try {
+    const snap=await getDocs(collection(db,'customers'));
+    allCusts=snap.docs.map(d=>({id:d.id,...d.data()}));
+    document.getElementById('cust-count').textContent=`${allCusts.length} customers`;
+    renderCusts(allCusts);
+  }catch(e){toast('Could not load customers','err');}
+}
+function renderCusts(custs) {
+  document.getElementById('custs-tbody').innerHTML=custs.length
+    ?custs.map(c=>`<tr>
+        <td><strong>${c.name||'—'}</strong></td>
+        <td>${c.email||'—'}</td>
+        <td>${c.phone||'—'}</td>
+        <td>${c.orderCount||0}</td>
+        <td>$${(c.totalSpent||0).toFixed(2)}</td>
+        <td style="font-size:0.78rem">${c.createdAt?.toDate?.()?.toLocaleDateString()||'—'}</td>
+      </tr>`).join('')
+    :'<tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--t4)">No customers yet</td></tr>';
+}
+window.filterCusts=q=>renderCusts(allCusts.filter(c=>c.name?.toLowerCase().includes(q.toLowerCase())||c.email?.toLowerCase().includes(q.toLowerCase())));
+
+// ── INVENTORY ─────────────────────────────────────
+async function loadInv() {
+  const snap=await getDocs(collection(db,'products'));
+  const prods=snap.docs.map(d=>({id:d.id,...d.data()}));
+  document.getElementById('inv-tbody').innerHTML=prods.map(p=>`<tr>
+    <td><strong>${p.name}</strong></td>
+    <td>${p.sku||'—'}</td>
+    <td>${p.category||'—'}</td>
+    <td><span style="font-weight:600;color:${(p.stock||0)<10?'var(--red)':'var(--green)'}">${p.stock??0}</span></td>
+    <td><input type="number" class="fi" style="width:90px" id="inv-${p.id}" value="${p.stock||0}" min="0"></td>
+    <td><button class="ta-btn" onclick="updStock('${p.id}')">Update</button></td>
+  </tr>`).join('');
+}
+window.updStock=async id=>{
+  const val=parseInt(document.getElementById('inv-'+id).value)||0;
+  await updateDoc(doc(db,'products',id),{stock:val});
+  toast('Stock updated!');
+};
+
+// ── CSV EXPORT ────────────────────────────────────
+window.exportCSV=function(type){
+  let rows=[],header=[];
+  if(type==='products'){header=['Name','Category','Price','Compare Price','Stock','Status','SKU'];rows=allProds.map(p=>[p.name,p.category,p.price,p.comparePrice||'',p.stock,p.status,p.sku||'']);}
+  else if(type==='orders'){header=['Order#','Customer','Email','Total','Status','Date'];rows=allOrders.map(o=>[o.orderNumber,o.customerName,o.customerEmail,o.total,o.status,o.createdAt?.toDate?.()?.toLocaleDateString()||'']);}
+  else if(type==='customers'){header=['Name','Email','Phone','Orders','Total Spent'];rows=allCusts.map(c=>[c.name,c.email,c.phone||'',c.orderCount||0,c.totalSpent||0]);}
+  const csv=[header,...rows].map(r=>r.map(v=>`"${v||''}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download=`quravio-${type}.csv`;a.click();
+};
+
+// ── CONTENT EDITOR ────────────────────────────────
+window.showCTab=function(id,btn){
+  document.querySelectorAll('.ctab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ctab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('ctab-'+id).classList.add('active');
+  btn.classList.add('active');
+};
+
+// All content field IDs — maps cv-fieldName to Firebase key
+const CONTENT_FIELDS = [
+  // Global
+  'siteName','titleSuffix','topbarText','promoCode','promoDiscount',
+  // Homepage hero
+  'slide0Img','hero0Eyebrow','hero0Btn','hero0Title','hero0Sub',
+  'slide1Img','hero1Eyebrow','hero1Title','hero1Sub',
+  'slide2Img','hero2Eyebrow','hero2Title','hero2Sub',
+  // Category banners
+  'catBg1','catTitle1','catSub1','catBg2','catTitle2','catSub2','catBg3','catTitle3','catSub3',
+  // Testimonials
+  'review1Avatar','review1Name','review1Loc','review1Text',
+  'review2Avatar','review2Name','review2Loc','review2Text',
+  'review3Avatar','review3Name','review3Loc','review3Text',
+  // Newsletter
+  'nlLabel','nlTitle','nlSub',
+  // Section labels
+  'featLabel','featTitle','newLabel','newTitle','catLabel',
+  // Shop
+  'shopBannerImg','shopEyebrow','shopTitle','shopSub',
+  'cat1','cat2','cat3','cat4','cat5','cat6','cat7','cat8',
+  'promo1Title','promo1Sub','promo2Title','promo2Sub','promo3Title','promo3Sub',
+  // Product
+  'trust1Icon','trust1Title','trust1Sub',
+  'trust2Icon','trust2Title','trust2Sub',
+  'trust3Icon','trust3Title','trust3Sub',
+  'relatedTitle',
+  // About
+  'aboutHeroBanner','aboutEyebrow','aboutHeroTitle',
+  'aboutImg1','aboutImg2','aboutImg3',
+  'aboutStoryImg1','aboutStoryImg2','aboutStoryEyebrow','aboutStoryTitle','aboutStoryBadge',
+  'num1Label','num2Label','num3Label',
+  // Contact
+  'contactHeroBanner','contactEyebrow','contactHeroTitle',
+  'contactEmail','contactWhatsapp','contactPhone',
+  'office1BgImg','office1City','office1Role','office1Addr',
+  'office2BgImg','office2City','office2Role','office2Addr',
+  // Footer
+  'footerDesc','footerCopy',
+  'socialIg','socialFb','socialTw','socialYt','socialTt','socialWa',
+  'showIg','showFb','showTw','showYt','showTt','showWa',
+  // Checkout
+  'paypalTitle','paypalSub','successTitle','successMsg',
+];
+
+async function loadContent() {
+  try {
+    const snap=await getDocs(query(collection(db,'settings'),where('key','==','content')));
+    if(snap.empty)return;
+    const d=snap.docs[0].data();
+    CONTENT_FIELDS.forEach(f=>{
+      const el=document.getElementById('cv-'+f);
+      if(!el||d[f]===undefined) return;
+      if(el.type==='checkbox') el.checked=(d[f]===true||d[f]==='true');
+      else el.value=d[f];
+    });
+    // Load image previews
+    ['slide0Img','slide1Img','slide2Img','shopBannerImg','aboutHeroBanner','aboutImg1','aboutImg2','aboutImg3','aboutStoryImg1','aboutStoryImg2','contactHeroBanner','office1BgImg','office2BgImg','catBg1','catBg2','catBg3'].forEach(f=>{
+      const url=d[f];
+      const previewId='up-'+f.replace('Img','').replace('Banner','').replace('Bg','');
+      const prev=document.getElementById(previewId);
+      if(url&&prev){
+        prev.style.display='block';
+        const img=prev.querySelector('img');
+        if(img)img.src=url;
+      }
+    });
+    toast('Content loaded','ok');
+  }catch(e){toast('Load error','err');}
+}
+
+window.saveAllContent=async function(){
+  const data={key:'content',updatedAt:serverTimestamp()};
+  CONTENT_FIELDS.forEach(f=>{
+    const el=document.getElementById('cv-'+f);
+    if(!el)return;
+    if(el.type==='checkbox') data[f]=el.checked;
+    else if(el.value) data[f]=el.value;
+  });
+  try {
+    const snap=await getDocs(query(collection(db,'settings'),where('key','==','content')));
+    if(snap.empty) await addDoc(collection(db,'settings'),data);
+    else await updateDoc(doc(db,'settings',snap.docs[0].id),data);
+    const msg=document.getElementById('save-msg');
+    msg.style.display='inline';
+    setTimeout(()=>msg.style.display='none',4000);
+    toast('✓ All changes saved! Now live on your website.','ok');
+  }catch(e){toast('Save failed: '+e.message,'err');}
+};
+
+// ── UPLOAD CONTENT IMAGE TO CLOUDINARY ────────────
+window.uploadContent=async function(input,fieldId,previewId){
+  const file=input.files[0];if(!file)return;
+  const progId=previewId+'-prog';
+  const barId=previewId+'-bar';
+  const statusId=previewId+'-status';
+  const prog=document.getElementById(progId);
+  const bar=document.getElementById(barId);
+  const status=document.getElementById(statusId);
+  if(prog)prog.style.display='block';
+  if(status)status.textContent='Uploading...';
+
+  const fd=new FormData();
+  fd.append('file',file);
+  fd.append('upload_preset',PRESET);
+  fd.append('folder','quravio_content');
+
+  const xhr=new XMLHttpRequest();
+  xhr.upload.onprogress=e=>{if(e.lengthComputable&&bar)bar.style.width=Math.round(e.loaded/e.total*100)+'%';};
+  xhr.onload=()=>{
+    const r=JSON.parse(xhr.responseText);
+    if(r.secure_url){
+      const hiddenInput=document.getElementById(fieldId);
+      if(hiddenInput)hiddenInput.value=r.secure_url;
+      const prev=document.getElementById(previewId);
+      if(prev){prev.style.display='block';const img=prev.querySelector('img');if(img)img.src=r.secure_url;}
+      if(status)status.textContent='✓ Uploaded! Click Save All to apply.';
+      if(bar)bar.style.width='100%';
+      toast('Image uploaded! Save to go live.','ok');
+    }else{
+      if(status)status.textContent='Upload failed. Try again.';
+      toast('Upload failed','err');
+    }
+  };
+  xhr.onerror=()=>{if(status)status.textContent='Network error.';toast('Network error','err');};
+  xhr.open('POST',`https://api.cloudinary.com/v1_1/${CLOUD}/image/upload`);
+  xhr.send(fd);
+};
+
+// ── SETTINGS ──────────────────────────────────────
+async function loadSettings(){
+  try{
+    const snap=await getDocs(query(collection(db,'settings'),where('key','==','paypal')));
+    if(!snap.empty){const d=snap.docs[0].data();document.getElementById('s-paypalClientId').value=d.clientId||'';document.getElementById('s-paypalCurrency').value=d.currency||'USD';}
+  }catch(e){}
+}
+window.savePaypal=async function(){
+  const clientId=document.getElementById('s-paypalClientId').value.trim();
+  const currency=document.getElementById('s-paypalCurrency').value;
+  const snap=await getDocs(query(collection(db,'settings'),where('key','==','paypal')));
+  if(snap.empty) await addDoc(collection(db,'settings'),{key:'paypal',clientId,currency});
+  else await updateDoc(doc(db,'settings',snap.docs[0].id),{clientId,currency});
+  toast('PayPal settings saved!');
+};
+window.saveCreds=function(){
+  const u=document.getElementById('s-newUser').value.trim();
+  const p=document.getElementById('s-newPass').value;
+  if(!u||!p){toast('Enter both username and password','err');return;}
+  localStorage.setItem(CREDS_KEY,JSON.stringify({u,p}));
+  toast('Credentials saved!');
+};
+
+// ── INIT ──────────────────────────────────────────
+document.getElementById('lp').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+</script>
+</body>
+</html>
