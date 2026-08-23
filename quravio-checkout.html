@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quravio — Secure Checkout</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A84C;--gold2:#E8C96A;--gold3:#8A6218;
+  --navy:#1B2A4A;--navy2:#0F1E36;--navy3:#2E4070;
+  --white:#fff;--off:#F7F5F1;--border:rgba(0,0,0,0.1);
+  --t1:#111;--t2:#333;--t3:#555;--t4:#888;
+  --red:#D93025;--green:#1A7A4A;--green2:#eaf4ee;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--t1);overflow-x:hidden}
+.gold-text{background:linear-gradient(90deg,var(--gold3),var(--gold2),var(--gold),var(--gold2),var(--gold3));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gs 4s linear infinite}
+@keyframes gs{to{background-position:200% center}}
+
+/* NAV */
+nav{background:#fff;border-bottom:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 1.25rem;height:64px;display:flex;align-items:center;gap:0}
+.nav-hamburger{background:none;border:none;cursor:pointer;padding:6px;display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--t1);border-radius:2px;transition:all .3s}
+.nav-hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.nav-hamburger.open span:nth-child(2){opacity:0}
+.nav-hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:600;letter-spacing:0.1em;text-decoration:none;flex:1;text-align:center}
+.nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.secure-badge{display:flex;align-items:center;gap:6px;font-size:0.72rem;color:var(--green);font-weight:600;background:var(--green2);padding:6px 14px;border:1px solid rgba(26,122,74,0.2)}
+
+/* MOBILE MENU */
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:998}
+.mob-overlay.on{display:block}
+.mob-drawer{position:fixed;top:0;left:-300px;bottom:0;width:300px;background:#fff;z-index:999;transition:left .3s;overflow-y:auto;box-shadow:4px 0 30px rgba(0,0,0,0.15)}
+.mob-drawer.on{left:0}
+.mob-head{padding:1.25rem 1.5rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.mob-close{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--t3);line-height:1}
+.mob-nav a{display:flex;align-items:center;gap:12px;padding:14px 1.5rem;font-size:0.9rem;font-weight:500;color:var(--t2);text-decoration:none;border-bottom:1px solid rgba(0,0,0,0.05);transition:background .2s}
+.mob-nav a:hover{background:var(--off);color:var(--navy)}
+
+/* STEPS */
+.steps-bar{background:#fff;border-bottom:1px solid var(--border)}
+.steps-inner{max-width:1200px;margin:0 auto;padding:0 2rem;display:flex;align-items:center}
+.step{display:flex;align-items:center;gap:10px;padding:16px 20px 16px 0;position:relative}
+.step:not(:last-child)::after{content:'›';position:absolute;right:4px;color:var(--t4);font-size:1.1rem}
+.step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;flex-shrink:0;border:2px solid var(--border);color:var(--t4);background:#fff;transition:all .2s}
+.step-lbl{font-size:0.75rem;font-weight:500;color:var(--t4);white-space:nowrap}
+.step.active .step-num{background:var(--navy);border-color:var(--navy);color:#fff}
+.step.active .step-lbl{color:var(--t1);font-weight:700}
+.step.done .step-num{background:var(--green);border-color:var(--green);color:#fff}
+.step.done .step-lbl{color:var(--green)}
+
+/* LAYOUT */
+.checkout-wrap{max-width:1200px;margin:0 auto;padding:2.5rem 2rem;display:grid;grid-template-columns:1fr 400px;gap:2.5rem;align-items:start}
+
+/* PANELS */
+.panel{background:#fff;border:1px solid var(--border);margin-bottom:1.5rem}
+.panel-head{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.panel-head h2{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;display:flex;align-items:center;gap:10px}
+.panel-body{padding:1.5rem}
+
+/* CART ITEMS */
+.ci{display:flex;gap:1.25rem;padding:1.25rem 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.ci:last-child{border-bottom:none}
+.ci-img{width:80px;height:100px;flex-shrink:0;border:1px solid var(--border);background:var(--off);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.ci-img img{width:100%;height:100%;object-fit:cover}
+.ci-info{flex:1}
+.ci-name{font-size:0.95rem;font-weight:600;margin-bottom:4px}
+.ci-cat{font-size:0.72rem;color:var(--t4);margin-bottom:8px}
+.ci-row{display:flex;align-items:center;gap:12px}
+.qty-wrap{display:flex;align-items:center;border:1.5px solid var(--border)}
+.qb{width:30px;height:30px;border:none;background:none;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.qb:hover{background:var(--navy);color:#fff}
+.qn{width:30px;text-align:center;font-size:0.82rem;font-weight:700}
+.ci-rm{background:none;border:none;cursor:pointer;font-size:0.68rem;font-weight:500;text-transform:uppercase;color:var(--t4);transition:color .2s}
+.ci-rm:hover{color:var(--red)}
+.ci-price{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.ci-price .cur{font-size:1rem;font-weight:700}
+.ci-price .was{font-size:0.8rem;color:var(--t4);text-decoration:line-through}
+
+/* PROMO */
+.promo-row{display:flex;gap:10px}
+.promo-input{flex:1;border:1.5px solid var(--border);padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:0.82rem;outline:none;transition:border-color .2s}
+.promo-input:focus{border-color:var(--gold)}
+.promo-btn{background:var(--navy);color:#fff;border:none;padding:11px 24px;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:700;text-transform:uppercase;cursor:pointer;transition:background .2s}
+.promo-btn:hover{background:var(--navy2)}
+.promo-ok{display:none;margin-top:10px;font-size:0.78rem;color:var(--green);font-weight:600;background:var(--green2);padding:8px 14px;border:1px solid rgba(26,122,74,0.2)}
+
+/* FORMS */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.fg{display:flex;flex-direction:column;gap:6px}
+.fg.span2{grid-column:1/-1}
+.fg label{font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--t3)}
+.fg input,.fg select,.fg textarea{border:1.5px solid var(--border);padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:0.85rem;color:var(--t1);outline:none;transition:border-color .2s;width:100%;background:#fff}
+.fg input:focus,.fg select:focus{border-color:var(--gold)}
+.fg.has-error input{border-color:var(--red)}
+.err-msg{font-size:0.7rem;color:var(--red);display:none}
+.fg.has-error .err-msg{display:block}
+.sec-title{font-size:0.7rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold3);margin-bottom:1rem;padding-bottom:8px;border-bottom:1px solid var(--border)}
+
+/* SHIPPING */
+.ship-opts{display:flex;flex-direction:column;gap:10px}
+.ship-opt{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1.5px solid var(--border);cursor:pointer;transition:all .2s;position:relative}
+.ship-opt.active{border-color:var(--navy);background:rgba(27,42,74,0.03)}
+.ship-opt input[type=radio]{width:18px;height:18px;accent-color:var(--navy);flex-shrink:0}
+.ship-info{flex:1}
+.ship-name{font-size:0.85rem;font-weight:600}
+.ship-sub{font-size:0.72rem;color:var(--t3);margin-top:2px}
+.ship-price{font-size:0.88rem;font-weight:700}
+.ship-price.free{color:var(--green)}
+.ship-badge{position:absolute;top:-1px;right:12px;background:var(--navy);color:var(--gold2);font-size:0.58rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:3px 8px}
+
+/* PAYMENT */
+.pay-tabs{display:flex;gap:0;margin-bottom:1.5rem;border-bottom:2px solid var(--border)}
+.pay-tab{display:flex;align-items:center;gap:8px;padding:12px 20px;cursor:pointer;font-size:0.78rem;font-weight:500;color:var(--t3);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
+.pay-tab:hover{color:var(--t1)}
+.pay-tab.active{color:var(--navy);border-color:var(--navy);font-weight:700}
+.pay-section{display:none}
+.pay-section.active{display:block}
+.pp-box{text-align:center;padding:2rem}
+.pp-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--t1);margin-bottom:10px}
+.pp-sub{font-size:0.8rem;color:var(--t3);line-height:1.7;max-width:380px;margin:0 auto 1.5rem}
+.pp-btn{background:#0070ba;color:#fff;border:none;padding:14px 36px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:10px;transition:background .2s}
+.pp-btn:hover{background:#005a8e}
+
+/* BUTTONS */
+.next-btn{background:var(--navy);color:#fff;border:none;padding:14px 36px;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:background .2s;margin-top:1.5rem;display:inline-flex;align-items:center;gap:8px}
+.next-btn:hover{background:var(--navy2)}
+.back-link{background:none;border:none;font-size:0.75rem;font-weight:500;color:var(--t3);cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin-top:1.25rem;transition:color .2s;font-family:'DM Sans',sans-serif}
+.back-link:hover{color:var(--navy)}
+
+/* STEP PANELS */
+.step-panel{display:none}
+.step-panel.active{display:block}
+
+/* PLACING / SUCCESS */
+.placing{display:none;flex-direction:column;align-items:center;padding:4rem;text-align:center;gap:1rem}
+.spin{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spn 0.8s linear infinite}
+@keyframes spn{to{transform:rotate(360deg)}}
+.success-box{display:none;text-align:center;padding:4rem 2rem}
+.success-icon{font-size:4rem;margin-bottom:1.5rem;animation:pop .5s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.success-box h2{font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--t1);margin-bottom:10px}
+.success-box p{font-size:0.85rem;color:var(--t3);line-height:1.7;max-width:440px;margin:0 auto 2rem}
+.order-num{background:var(--off);border:1px solid var(--border);padding:14px 24px;font-size:0.85rem;color:var(--t2);margin-bottom:2rem;display:inline-block}
+.order-num strong{color:var(--navy);font-size:1rem}
+.success-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.sa-btn{padding:12px 28px;font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border:none}
+.sa-primary{background:var(--navy);color:#fff}
+.sa-outline{background:none;border:1.5px solid var(--border);color:var(--t2)}
+
+/* ORDER SUMMARY */
+.order-summary{background:#fff;border:1px solid var(--border);position:sticky;top:20px}
+.os-head{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);background:var(--navy)}
+.os-head h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:#fff;display:flex;align-items:center;gap:8px}
+.os-body{padding:1.5rem}
+.os-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.os-item:last-of-type{border-bottom:none}
+.os-img{width:56px;height:68px;background:var(--off);border:1px solid var(--border);position:relative;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.os-img img{width:100%;height:100%;object-fit:cover}
+.os-qty{position:absolute;top:-6px;right:-6px;width:18px;height:18px;background:var(--navy);color:#fff;border-radius:50%;font-size:0.58rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.os-name{flex:1;font-size:0.82rem;font-weight:500;color:var(--t2);line-height:1.3}
+.os-price{font-size:0.88rem;font-weight:700;flex-shrink:0}
+.os-divider{height:1px;background:var(--border);margin:1rem 0}
+.os-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:0.82rem}
+.os-row .lbl{color:var(--t3)}
+.os-row .val{font-weight:600}
+.os-row .val.free{color:var(--green);font-weight:700}
+.os-row .val.disc{color:var(--red)}
+.os-total{display:flex;justify-content:space-between;align-items:center;padding:1rem 0;border-top:2px solid var(--t1);margin-top:6px}
+.os-total .tlbl{font-size:0.88rem;font-weight:700}
+.os-total .tval{font-size:1.3rem;font-weight:700}
+.checkout-btn{width:100%;background:var(--navy);color:#fff;border:none;padding:16px;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:1rem}
+.checkout-btn:hover{background:var(--navy2)}
+.trust-strip{display:flex;flex-direction:column;gap:8px;margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border)}
+.ts-item{display:flex;align-items:center;gap:10px;font-size:0.73rem;color:var(--t3)}
+.ts-item span{font-size:1rem;flex-shrink:0}
+.ts-item strong{color:var(--t2)}
+
+/* FOOTER */
+footer{background:var(--navy2);padding:2rem 0;margin-top:4rem}
+.ft-inner{max-width:1200px;margin:0 auto;padding:0 2rem}
+.ft-bot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;border-top:1px solid rgba(255,255,255,0.08);padding-top:1.5rem}
+.ft-copy{font-size:0.7rem;color:rgba(255,255,255,0.4)}
+.pay-row{display:flex;gap:8px}
+.pay-b{background:rgba(255,255,255,0.07);padding:5px 12px;font-size:0.62rem;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase}
+.ft-links{display:flex;gap:1.5rem}
+.ft-links a{font-size:0.72rem;color:rgba(255,255,255,0.4);text-decoration:none}
+.ft-links a:hover{color:rgba(255,255,255,0.7)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .checkout-wrap{grid-template-columns:1fr}
+  .order-summary{position:static}
+  .nav-links{display:none}
+  .nav-logo{text-align:center}
+}
+@media(max-width:600px){
+  .checkout-wrap{padding:1.5rem 1rem}
+  .form-grid{grid-template-columns:1fr}
+  .fg.span2{grid-column:1}
+  .steps-inner{overflow-x:auto;gap:0}
+  .step{padding:12px 14px 12px 0}
+  .step-lbl{display:none}
+  .step.active .step-lbl{display:block}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <button class="nav-hamburger" id="navHamburger" onclick="openMob()">
+      <span></span><span></span><span></span>
+    </button>
+    <a href="index.html" class="nav-logo gold-text" id="c-siteName">Quravio</a>
+    <div class="nav-right">
+      <div class="secure-badge">&#128274; 256-bit SSL Secure</div>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mob-overlay" id="mobOverlay" onclick="closeMob()"></div>
+<div class="mob-drawer" id="mobDrawer">
+  <div class="mob-head">
+    <span class="gold-text" style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;letter-spacing:0.1em">Quravio</span>
+    <button class="mob-close" onclick="closeMob()">&#10005;</button>
+  </div>
+  <div class="mob-nav">
+    <a href="index.html" onclick="closeMob()">&#127968; Home</a>
+    <a href="quravio-shop.html" onclick="closeMob()">&#128717; Continue Shopping</a>
+  </div>
+</div>
+
+<!-- STEPS -->
+<div class="steps-bar">
+  <div class="steps-inner">
+    <div class="step active" id="step-tab-1"><div class="step-num" id="sn1">1</div><div class="step-lbl">Cart</div></div>
+    <div class="step" id="step-tab-2"><div class="step-num" id="sn2">2</div><div class="step-lbl">Shipping</div></div>
+    <div class="step" id="step-tab-3"><div class="step-num" id="sn3">3</div><div class="step-lbl">Payment</div></div>
+    <div class="step" id="step-tab-4"><div class="step-num" id="sn4">4</div><div class="step-lbl">Confirmation</div></div>
+  </div>
+</div>
+
+<div class="checkout-wrap" id="checkoutWrap">
+  <div id="leftCol">
+
+    <!-- STEP 1: CART -->
+    <div class="step-panel active" id="panel1">
+      <div class="panel">
+        <div class="panel-head"><h2>&#128722; Your Cart</h2><a href="quravio-shop.html" style="font-size:0.72rem;color:var(--navy);text-decoration:none;font-weight:500;border-bottom:1px solid var(--navy)">Add more items</a></div>
+        <div class="panel-body" id="cartItemsBody"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>&#127991;&#65039; Promo Code</h2></div>
+        <div class="panel-body">
+          <div class="promo-row">
+            <input class="promo-input" id="promoInput" type="text" placeholder="Enter promo code (try QURAVIO20)">
+            <button class="promo-btn" onclick="applyPromo()">Apply</button>
+          </div>
+          <div class="promo-ok" id="promoOk">&#10003; Code applied — 20% off!</div>
+        </div>
+      </div>
+      <button class="next-btn" onclick="goStep(2)">Continue to Shipping &rarr;</button>
+    </div>
+
+    <!-- STEP 2: SHIPPING -->
+    <div class="step-panel" id="panel2">
+      <div class="panel">
+        <div class="panel-head"><h2>&#128230; Shipping Address</h2></div>
+        <div class="panel-body">
+          <div class="sec-title">&#10022; Contact Information</div>
+          <div class="form-grid" style="margin-bottom:1.5rem">
+            <div class="fg" id="fg-email"><label>Email Address *</label><input type="email" id="inp-email" placeholder="you@example.com"><span class="err-msg">Please enter a valid email</span></div>
+            <div class="fg" id="fg-phone"><label>Phone Number *</label><input type="tel" id="inp-phone" placeholder="+60 12 345 6789"><span class="err-msg">Required</span></div>
+          </div>
+          <div class="sec-title">&#10022; Delivery Address</div>
+          <div class="form-grid">
+            <div class="fg" id="fg-fname"><label>First Name *</label><input type="text" id="inp-fname" placeholder="James"><span class="err-msg">Required</span></div>
+            <div class="fg" id="fg-lname"><label>Last Name *</label><input type="text" id="inp-lname" placeholder="Richardson"><span class="err-msg">Required</span></div>
+            <div class="fg span2" id="fg-addr"><label>Street Address *</label><input type="text" id="inp-addr" placeholder="123 Luxury Avenue"><span class="err-msg">Required</span></div>
+            <div class="fg" id="fg-city"><label>City *</label><input type="text" id="inp-city" placeholder="Kuala Lumpur"><span class="err-msg">Required</span></div>
+            <div class="fg" id="fg-zip"><label>Postcode *</label><input type="text" id="inp-zip" placeholder="50000"><span class="err-msg">Required</span></div>
+            <div class="fg"><label>Country</label>
+              <select id="inp-country">
+                <option value="">Select country...</option>
+                <option value="MY">Malaysia</option>
+                <option value="SG">Singapore</option>
+                <option value="UK">United Kingdom</option>
+                <option value="US">United States</option>
+                <option value="AU">Australia</option>
+                <option value="CA">Canada</option>
+                <option value="AE">UAE</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+            <div class="fg"><label>State / Region</label><input type="text" id="inp-state" placeholder="e.g. Selangor"></div>
+          </div>
+          <div style="margin-top:1rem">
+            <div class="fg"><label>Delivery Notes (Optional)</label><textarea id="inp-notes" rows="2" style="border:1.5px solid var(--border);padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:0.85rem;width:100%;outline:none;resize:vertical" placeholder="Leave at door, gift message..."></textarea></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>&#128666; Shipping Method</h2></div>
+        <div class="panel-body">
+          <div class="ship-opts">
+            <label class="ship-opt active" id="ship1">
+              <input type="radio" name="shipping" value="free" checked onchange="selectShipping(this)">
+              <div class="ship-info"><div class="ship-name">Standard Shipping</div><div class="ship-sub">7–14 business days &middot; Full tracking</div></div>
+              <div class="ship-price free">FREE</div>
+              <div class="ship-badge">Most Popular</div>
+            </label>
+            <label class="ship-opt" id="ship2">
+              <input type="radio" name="shipping" value="express" onchange="selectShipping(this)">
+              <div class="ship-info"><div class="ship-name">Express Shipping</div><div class="ship-sub">3–5 business days &middot; Priority handling</div></div>
+              <div class="ship-price">$12.99</div>
+            </label>
+            <label class="ship-opt" id="ship3">
+              <input type="radio" name="shipping" value="nextday" onchange="selectShipping(this)">
+              <div class="ship-info"><div class="ship-name">Next Day Delivery</div><div class="ship-sub">Order before 2pm &middot; Select countries</div></div>
+              <div class="ship-price">$24.99</div>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+        <button class="next-btn" onclick="validateShipping()">Continue to Payment &rarr;</button>
+        <button class="back-link" onclick="goStep(1)">&larr; Back to Cart</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: PAYMENT -->
+    <div class="step-panel" id="panel3">
+      <div class="panel">
+        <div class="panel-head"><h2>&#128179; Payment Method</h2></div>
+        <div class="panel-body">
+          <div class="pay-tabs">
+            <div class="pay-tab active" onclick="selectPayTab(0,this)">&#128371;&#65039; PayPal</div>
+            <div class="pay-tab" onclick="selectPayTab(1,this)">&#128179; Credit Card</div>
+          </div>
+          <!-- PayPal -->
+          <div class="pay-section active" id="pay-0">
+            <div class="pp-box">
+              <div style="font-size:3rem;margin-bottom:1rem">&#128371;&#65039;</div>
+              <div class="pp-title" id="c-paypalTitle">Pay securely with PayPal</div>
+              <p class="pp-sub" id="c-paypalSub">You will be redirected to PayPal to complete your purchase. Buyer protection included on every order.</p>
+              <div id="paypal-btn-container"></div>
+              <button class="pp-btn" id="paypal-fallback" onclick="placeOrder()">Pay with PayPal</button>
+            </div>
+          </div>
+          <!-- Credit Card -->
+          <div class="pay-section" id="pay-1">
+            <div class="sec-title" style="margin-top:0">&#10022; Card Details</div>
+            <div style="display:flex;flex-direction:column;gap:1rem">
+              <div class="fg"><label>Name on Card *</label><input type="text" placeholder="James Richardson"></div>
+              <div class="fg" style="position:relative"><label>Card Number *</label><input type="text" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)"><span style="position:absolute;right:12px;bottom:11px;font-size:1.2rem">&#128179;</span></div>
+              <div class="form-grid">
+                <div class="fg"><label>Expiry Date *</label><input type="text" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)"></div>
+                <div class="fg"><label>CVV *</label><input type="text" placeholder="123" maxlength="4"></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:0.72rem;color:var(--t3)"><span>&#128274;</span> Card details are encrypted with 256-bit SSL.</div>
+              <button class="next-btn" style="margin-top:0" onclick="placeOrder()">&#128274; Place Order</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>&#128203; Billing Address</h2></div>
+        <div class="panel-body">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.85rem;font-weight:500">
+            <input type="checkbox" id="sameAddr" checked style="width:18px;height:18px;accent-color:var(--navy)" onchange="toggleBilling()"> Same as shipping address
+          </label>
+          <div id="billingForm" style="display:none;margin-top:1rem">
+            <div class="form-grid">
+              <div class="fg"><label>First Name *</label><input type="text"></div>
+              <div class="fg"><label>Last Name *</label><input type="text"></div>
+              <div class="fg span2"><label>Street Address *</label><input type="text"></div>
+              <div class="fg"><label>City *</label><input type="text"></div>
+              <div class="fg"><label>Postcode *</label><input type="text"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+        <button class="next-btn" onclick="placeOrder()">&#128274; Place Order</button>
+        <button class="back-link" onclick="goStep(2)">&larr; Back to Shipping</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: CONFIRMATION -->
+    <div class="step-panel" id="panel4">
+      <div class="panel">
+        <div class="placing" id="placingScreen">
+          <div class="spin"></div>
+          <div style="font-size:0.9rem;font-weight:600;color:var(--t2)">Processing your order...</div>
+          <div style="font-size:0.78rem;color:var(--t4)">Please do not close this page</div>
+        </div>
+        <div class="success-box" id="successScreen">
+          <div class="success-icon">&#127881;</div>
+          <h2 id="c-successTitle">Order Confirmed!</h2>
+          <p id="c-successMsg">Thank you for your order. We have sent your confirmation to <strong id="confirmEmail">your@email.com</strong>. Your items will be dispatched within 1–2 business days.</p>
+          <div class="order-num">Order: <strong id="orderNum">#QUR-000000</strong></div>
+          <div class="success-actions">
+            <button class="sa-btn sa-primary" onclick="window.location='quravio-shop.html'">Continue Shopping</button>
+            <button class="sa-btn sa-outline" onclick="window.location='index.html'">Back to Home</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ORDER SUMMARY -->
+  <div id="summaryCol">
+    <div class="order-summary">
+      <div class="os-head"><h3>&#129534; Order Summary <span id="itemCountLbl" style="font-size:0.8rem;opacity:0.7"></span></h3></div>
+      <div class="os-body">
+        <div id="osSummaryItems"></div>
+        <div class="os-divider"></div>
+        <div class="os-row"><span class="lbl">Subtotal</span><span class="val" id="osSubtotal">$0.00</span></div>
+        <div class="os-row" id="osDiscRow" style="display:none"><span class="lbl">Discount</span><span class="val disc" id="osDiscount">−$0.00</span></div>
+        <div class="os-row"><span class="lbl">Shipping</span><span class="val free" id="osShipping">FREE</span></div>
+        <div class="os-total"><span class="tlbl">Total</span><span class="tval" id="osTotal">$0.00</span></div>
+        <button class="checkout-btn" id="mainCheckoutBtn" onclick="nextFromSummary()">&#128274; Secure Checkout</button>
+        <div class="trust-strip">
+          <div class="ts-item"><span>&#128274;</span><div><strong>SSL Encrypted</strong> &mdash; 256-bit security</div></div>
+          <div class="ts-item"><span>&#128371;&#65039;</span><div><strong>PayPal Protected</strong> &mdash; Buyer guarantee</div></div>
+          <div class="ts-item"><span>&#8617;&#65039;</span><div><strong>30-Day Returns</strong> &mdash; Free &amp; easy</div></div>
+          <div class="ts-item"><span>&#128666;</span><div><strong>Free Shipping</strong> &mdash; Worldwide</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="ft-inner">
+    <div class="ft-bot">
+      <p class="ft-copy" id="c-footerCopy">&copy; 2025 Quravio.com &mdash; All rights reserved.</p>
+      <div class="ft-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="quravio-contact.html">Contact</a></div>
+      <div class="pay-row"><span class="pay-b">PayPal</span><span class="pay-b">Visa</span><span class="pay-b">Mastercard</span></div>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, doc, query, where, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyAbE76HZVyfiVw0SyHNzpAxRCeb_uLCW7Y",
+  authDomain:"quravio-store.firebaseapp.com",
+  projectId:"quravio-store",
+  storageBucket:"quravio-store.firebasestorage.app",
+  messagingSenderId:"1066738660513",
+  appId:"1:1066738660513:web:c7b54e111802d6fff5ece0"
+});
+const db = getFirestore(app);
+
+let cart = JSON.parse(localStorage.getItem('qcart')||'[]');
+let shippingCost = 0, promoApplied = false, currentStep = 1;
+let PROMO_CODE = 'QURAVIO20'; // loaded from Firebase
+let PROMO_DISCOUNT = 20;      // loaded from Firebase
+
+// ── APPLY CONTENT FROM ADMIN ──────────────────────
+async function applyContent() {
+  try {
+    const snap = await getDocs(query(collection(db,'settings'), where('key','==','content')));
+    if(snap.empty) return;
+    const d = snap.docs[0].data();
+    const set = (id,val) => {const el=document.getElementById(id);if(el&&val)el.innerHTML=val;};
+    set('c-siteName', d.siteName);
+    // Load promo code + discount from admin
+    if(d.promoCode) {
+      PROMO_CODE = d.promoCode.toUpperCase();
+      document.getElementById('promoInput').placeholder = 'Enter promo code (try '+PROMO_CODE+')';
+    }
+    if(d.promoDiscount) {
+      PROMO_DISCOUNT = parseInt(d.promoDiscount)||20;
+      document.getElementById('promoOk').textContent = '✓ Code applied — '+PROMO_DISCOUNT+'% off!';
+    }
+    set('c-footerCopy', d.footerCopy);
+    set('c-paypalTitle', d.paypalTitle);
+    set('c-paypalSub', d.paypalSub);
+    set('c-successTitle', d.successTitle);
+    set('c-successMsg', d.successMsg);
+    // Load PayPal
+    if(d.paypalClientId && d.paypalClientId !== 'sandbox') loadPayPal(d.paypalClientId, d.paypalCurrency||'USD');
+  } catch(e) {}
+}
+
+// ── RENDER CART ───────────────────────────────────
+function renderCart() {
+  const body = document.getElementById('cartItemsBody');
+  if(!cart.length) {
+    body.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--t4)"><div style="font-size:3rem;margin-bottom:1rem">&#128722;</div><p style="font-size:0.88rem;margin-bottom:1.5rem">Your cart is empty</p><a href="quravio-shop.html" style="background:var(--navy);color:#fff;padding:12px 28px;text-decoration:none;font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase">Shop Now</a></div>`;
+    updateSummary();
+    return;
+  }
+  body.innerHTML = cart.map(i => `
+    <div class="ci">
+      <div class="ci-img">${i.image?`<img src="${i.image}" onerror="this.style.display='none'">`:''}</div>
+      <div class="ci-info">
+        <div class="ci-name">${i.name}</div>
+        <div class="ci-cat">$${i.price.toFixed(2)} each</div>
+        <div class="ci-row">
+          <div class="qty-wrap">
+            <button class="qb" onclick="qtyChange('${i.id}',-1)">&#8722;</button>
+            <span class="qn">${i.qty}</span>
+            <button class="qb" onclick="qtyChange('${i.id}',1)">+</button>
+          </div>
+          <button class="ci-rm" onclick="removeItem('${i.id}')">Remove</button>
+        </div>
+      </div>
+      <div class="ci-price"><span class="cur">$${(i.price*i.qty).toFixed(2)}</span></div>
+    </div>`).join('');
+  updateSummary();
+}
+
+function updateSummary() {
+  const sub = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const disc = promoApplied ? sub*(PROMO_DISCOUNT/100) : 0;
+  const total = sub - disc + shippingCost;
+  const count = cart.reduce((s,i)=>s+i.qty,0);
+  document.getElementById('itemCountLbl').textContent = `(${count} items)`;
+  document.getElementById('osSubtotal').textContent = '$'+sub.toFixed(2);
+  document.getElementById('osShipping').textContent = shippingCost===0 ? 'FREE' : '$'+shippingCost.toFixed(2);
+  document.getElementById('osTotal').textContent = '$'+total.toFixed(2);
+  if(promoApplied) {
+    document.getElementById('osDiscount').textContent = '−$'+disc.toFixed(2);
+    document.getElementById('osDiscRow').style.display = 'flex';
+  } else {
+    document.getElementById('osDiscRow').style.display = 'none';
+  }
+  document.getElementById('osSummaryItems').innerHTML = cart.map(i => `
+    <div class="os-item">
+      <div class="os-img">${i.image?`<img src="${i.image}">`:''}<div class="os-qty">${i.qty}</div></div>
+      <div class="os-name">${i.name}</div>
+      <div class="os-price">$${(i.price*i.qty).toFixed(2)}</div>
+    </div>`).join('');
+}
+
+window.qtyChange = (id,d) => {
+  const it = cart.find(x=>x.id===id);
+  if(!it) return;
+  it.qty = Math.max(1,it.qty+d);
+  if(it.qty<1) cart = cart.filter(x=>x.id!==id);
+  localStorage.setItem('qcart',JSON.stringify(cart));
+  renderCart();
+};
+window.removeItem = id => { cart=cart.filter(x=>x.id!==id); localStorage.setItem('qcart',JSON.stringify(cart)); renderCart(); };
+
+// ── PROMO ─────────────────────────────────────────
+window.applyPromo = () => {
+  const code = document.getElementById('promoInput').value.trim().toUpperCase();
+  if(code === PROMO_CODE || code === 'LUXURY20' || code === 'WELCOME') {
+    promoApplied = true;
+    document.getElementById('promoOk').textContent = '✓ Code applied — '+PROMO_DISCOUNT+'% off!';
+    document.getElementById('promoOk').style.display = 'block';
+    updateSummary();
+  } else {
+    document.getElementById('promoInput').style.borderColor = 'var(--red)';
+    setTimeout(() => document.getElementById('promoInput').style.borderColor='', 2000);
+  }
+};
+
+// ── SHIPPING ──────────────────────────────────────
+window.selectShipping = radio => {
+  document.querySelectorAll('.ship-opt').forEach(o=>o.classList.remove('active'));
+  radio.closest('.ship-opt').classList.add('active');
+  shippingCost = radio.value==='free'?0:radio.value==='express'?12.99:24.99;
+  updateSummary();
+};
+
+// ── STEPS ─────────────────────────────────────────
+window.goStep = n => {
+  if(!cart.length && n>1) return;
+  for(let i=1;i<=4;i++) {
+    const tab = document.getElementById('step-tab-'+i);
+    const num = document.getElementById('sn'+i);
+    const panel = document.getElementById('panel'+i);
+    tab.classList.remove('active','done');
+    if(i<n){tab.classList.add('done');num.textContent='✓';}
+    else if(i===n){tab.classList.add('active');num.textContent=i;}
+    else{num.textContent=i;}
+    if(panel) panel.classList.toggle('active',i===n);
+  }
+  currentStep = n;
+  window.scrollTo({top:0,behavior:'smooth'});
+  const btn = document.getElementById('mainCheckoutBtn');
+  if(n===1) btn.textContent = '🔒 Proceed to Shipping';
+  else if(n===2) btn.textContent = '🔒 Continue to Payment';
+  else if(n===3) btn.textContent = '🔒 Place Order';
+  else btn.style.display = 'none';
+};
+window.nextFromSummary = () => {
+  if(currentStep===1) goStep(2);
+  else if(currentStep===2) validateShipping();
+  else if(currentStep===3) placeOrder();
+};
+
+// ── VALIDATION ────────────────────────────────────
+window.validateShipping = () => {
+  const fields = [
+    {id:'email',el:'fg-email',fn:v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)},
+    {id:'phone',el:'fg-phone',fn:v=>v.replace(/\D/g,'').length>=7},
+    {id:'fname',el:'fg-fname',fn:v=>v.trim().length>=2},
+    {id:'lname',el:'fg-lname',fn:v=>v.trim().length>=2},
+    {id:'addr',el:'fg-addr',fn:v=>v.trim().length>=5},
+    {id:'city',el:'fg-city',fn:v=>v.trim().length>=2},
+    {id:'zip',el:'fg-zip',fn:v=>v.trim().length>=3},
+  ];
+  const valid = fields.every(f=>{
+    const inp=document.getElementById('inp-'+f.id);
+    const ok=f.fn(inp.value);
+    document.getElementById(f.el).classList.toggle('has-error',!ok);
+    return ok;
+  });
+  if(valid) goStep(3);
+};
+
+// ── PLACE ORDER ───────────────────────────────────
+window.placeOrder = async () => {
+  if(!cart.length){alert('Cart is empty!');return;}
+  goStep(4);
+  document.getElementById('placingScreen').style.display='flex';
+  document.getElementById('successScreen').style.display='none';
+  document.getElementById('mainCheckoutBtn').style.display='none';
+
+  const email = document.getElementById('inp-email')?.value||'';
+  const fname = document.getElementById('inp-fname')?.value||'';
+  const lname = document.getElementById('inp-lname')?.value||'';
+  const sub = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const disc = promoApplied?sub*0.2:0;
+  const total = sub-disc+shippingCost;
+  const orderNum = 'QUR-'+Math.floor(100000+Math.random()*900000);
+  const addr = [document.getElementById('inp-addr')?.value,document.getElementById('inp-city')?.value,document.getElementById('inp-state')?.value,document.getElementById('inp-zip')?.value,document.getElementById('inp-country')?.value].filter(Boolean).join(', ');
+
+  try {
+    await addDoc(collection(db,'orders'),{
+      orderNumber:orderNum,customerName:`${fname} ${lname}`.trim(),
+      customerEmail:email,phone:document.getElementById('inp-phone')?.value||'',
+      shippingAddress:addr,notes:document.getElementById('inp-notes')?.value||'',
+      items:cart.map(i=>({id:i.id,name:i.name,price:i.price,qty:i.qty,image:i.image||''})),
+      subtotal:sub,shipping:shippingCost,discount:disc,total,
+      promoCode:promoApplied?document.getElementById('promoInput').value.toUpperCase():'',
+      status:'pending',paymentMethod:'PayPal',createdAt:serverTimestamp()
+    });
+    try {
+      const cs=await getDocs(query(collection(db,'customers'),where('email','==',email)));
+      if(cs.empty) await addDoc(collection(db,'customers'),{name:`${fname} ${lname}`.trim(),email,orderCount:1,totalSpent:total,createdAt:serverTimestamp()});
+    }catch(e){}
+    localStorage.removeItem('qcart');
+    setTimeout(()=>{
+      document.getElementById('placingScreen').style.display='none';
+      document.getElementById('successScreen').style.display='block';
+      document.getElementById('confirmEmail').textContent=email||'your inbox';
+      document.getElementById('orderNum').textContent='#'+orderNum;
+    },2000);
+  }catch(e){
+    document.getElementById('placingScreen').style.display='none';
+    alert('Order could not be saved. Please try again. Error: '+e.message);
+    goStep(3);
+  }
+};
+
+// ── PAYPAL ────────────────────────────────────────
+function loadPayPal(clientId, currency) {
+  document.getElementById('paypal-fallback').style.display='none';
+  const s=document.createElement('script');
+  s.src=`https://www.paypal.com/sdk/js?client-id=${clientId}&currency=${currency}`;
+  s.onload=()=>{
+    paypal.Buttons({
+      createOrder:(data,actions)=>{
+        const sub=cart.reduce((s,i)=>s+i.price*i.qty,0);
+        const disc=promoApplied?sub*0.2:0;
+        const total=sub-disc+shippingCost;
+        return actions.order.create({purchase_units:[{amount:{value:total.toFixed(2),currency_code:currency},description:'Quravio Order'}]});
+      },
+      onApprove:async(data,actions)=>{await actions.order.capture();placeOrder();},
+      onError:err=>{console.error(err);alert('PayPal error. Please try again.');}
+    }).render('#paypal-btn-container');
+  };
+  document.head.appendChild(s);
+}
+
+// ── MISC ──────────────────────────────────────────
+window.selectPayTab=(idx,el)=>{document.querySelectorAll('.pay-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.querySelectorAll('.pay-section').forEach((s,i)=>s.classList.toggle('active',i===idx));};
+window.toggleBilling=()=>{document.getElementById('billingForm').style.display=document.getElementById('sameAddr').checked?'none':'block';};
+window.formatCard=inp=>{let v=inp.value.replace(/\D/g,'').substring(0,16);inp.value=v.replace(/(.{4})/g,'$1 ').trim();};
+window.formatExpiry=inp=>{let v=inp.value.replace(/\D/g,'');if(v.length>=3)v=v.substring(0,2)+' / '+v.substring(2,4);inp.value=v;};
+
+// ── MOBILE MENU ───────────────────────────────────
+window.openMob=()=>{document.getElementById('navHamburger').classList.add('open');document.getElementById('mobDrawer').classList.add('on');document.getElementById('mobOverlay').classList.add('on');document.body.style.overflow='hidden';};
+window.closeMob=()=>{document.getElementById('navHamburger').classList.remove('open');document.getElementById('mobDrawer').classList.remove('on');document.getElementById('mobOverlay').classList.remove('on');document.body.style.overflow='';};
+
+// ── INIT ──────────────────────────────────────────
+renderCart();
+applyContent();
+</script>
+</body>
+</html>
