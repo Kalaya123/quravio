@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quravio — Product</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#C9A84C;--gold2:#E8C96A;--gold3:#8A6218;--navy:#1B2A4A;--navy2:#0F1E36;--white:#fff;--off:#F7F5F1;--border:rgba(0,0,0,0.1);--t1:#111;--t2:#333;--t3:#555;--t4:#888;--red:#D93025;--green:#1A7A4A}
+body{font-family:'DM Sans',sans-serif;background:#fff;color:var(--t1)}
+.gold-text{background:linear-gradient(90deg,var(--gold3),var(--gold2),var(--gold),var(--gold2),var(--gold3));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gs 4s linear infinite}
+@keyframes gs{to{background-position:200% center}}
+.topbar{background:var(--navy2);padding:8px 0;text-align:center;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.75)}
+.topbar strong{color:var(--gold2)}
+nav{position:sticky;top:0;z-index:990;background:#fff;border-bottom:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.nav-inner{max-width:1400px;margin:0 auto;padding:0 2rem;height:68px;display:flex;align-items:center;gap:2rem}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:600;letter-spacing:0.1em;text-decoration:none;flex-shrink:0}
+.nav-cats{display:flex;gap:0;flex:1;justify-content:center}
+.nav-cats a{padding:0 1.1rem;height:68px;display:flex;align-items:center;font-size:0.78rem;font-weight:500;color:var(--t2);text-decoration:none;border-bottom:2px solid transparent;transition:all .2s}
+.nav-cats a:hover{color:var(--t1);border-color:var(--gold)}
+.nav-right{display:flex;align-items:center;gap:0.5rem;flex-shrink:0}
+.icon-btn{background:none;border:none;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;color:var(--t2);position:relative;transition:color .2s;border-radius:2px}
+.icon-btn:hover{color:var(--navy);background:var(--off)}
+.cart-count{position:absolute;top:5px;right:5px;background:var(--navy);color:#fff;font-size:0.58rem;font-weight:600;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.breadcrumb-bar{background:var(--off);border-bottom:1px solid var(--border);padding:12px 0}
+.bc-inner{max-width:1400px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.bc-inner a,.bc-inner span{font-size:0.72rem;color:var(--t4);text-decoration:none;transition:color .2s}
+.bc-inner a:hover{color:var(--navy)}
+.bc-inner .cur{color:var(--t2);font-weight:500}
+.bc-sep{color:var(--border)}
+
+/* LOADING */
+.loading-screen{max-width:1400px;margin:0 auto;padding:5rem 2rem;text-align:center}
+.spin{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spn .7s linear infinite;margin:0 auto 1.5rem}
+@keyframes spn{to{transform:rotate(360deg)}}
+
+/* PRODUCT LAYOUT */
+.product-main{max-width:1400px;margin:0 auto;padding:3rem 2rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+
+/* GALLERY */
+.gallery{position:sticky;top:88px}
+.gallery-main{position:relative;background:var(--off);aspect-ratio:1;overflow:hidden;margin-bottom:12px;border:1px solid var(--border)}
+.gallery-main img{width:100%;height:100%;object-fit:cover;transition:transform .4s;cursor:zoom-in}
+.gallery-main img.zoomed{transform:scale(1.5);cursor:zoom-out}
+.gallery-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:8rem;background:linear-gradient(135deg,var(--navy),var(--navy2));color:rgba(255,255,255,0.2)}
+.gallery-badge{position:absolute;top:16px;left:16px;background:var(--red);color:#fff;font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:5px 12px;z-index:2}
+.gallery-nav{position:absolute;top:50%;transform:translateY(-50%);display:flex;justify-content:space-between;width:100%;padding:0 12px;pointer-events:none;z-index:3}
+.gnav{pointer-events:all;width:38px;height:38px;background:rgba(255,255,255,0.9);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:var(--t2);transition:all .2s;border-radius:50%}
+.gnav:hover{background:var(--navy);color:#fff}
+.thumbs{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+.thumbs::-webkit-scrollbar{height:3px}
+.thumbs::-webkit-scrollbar-thumb{background:var(--gold)}
+.thumb{width:80px;height:80px;flex-shrink:0;border:2px solid var(--border);cursor:pointer;overflow:hidden;transition:border-color .2s;background:var(--off)}
+.thumb:hover,.thumb.active{border-color:var(--gold)}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem}
+
+/* PRODUCT INFO */
+.pi-cat{font-size:0.68rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold3);margin-bottom:10px}
+.pi-name{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3vw,2.6rem);font-weight:400;color:var(--t1);line-height:1.2;margin-bottom:16px}
+.price-block{background:var(--off);padding:1.5rem;margin-bottom:1.5rem;border:1px solid var(--border)}
+.pb-row{display:flex;align-items:baseline;gap:12px;margin-bottom:6px;flex-wrap:wrap}
+.p-now{font-size:1.8rem;font-weight:700;color:var(--t1)}
+.p-was{font-size:1.1rem;color:var(--t4);text-decoration:line-through}
+.p-off{background:var(--red);color:#fff;font-size:0.7rem;font-weight:700;padding:4px 10px}
+.p-save{font-size:0.78rem;color:var(--green);font-weight:600}
+.desc-block{font-size:0.88rem;color:var(--t3);line-height:1.8;margin-bottom:1.5rem;padding:1rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+
+/* SKU / INFO */
+.meta-row{display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:1.5rem;font-size:0.78rem;color:var(--t4)}
+.meta-row span strong{color:var(--t2);font-weight:600}
+
+/* QTY + ADD */
+.qty-add{display:flex;gap:12px;margin-bottom:1rem;flex-wrap:wrap}
+.qty-wrap{display:flex;align-items:center;border:1.5px solid var(--border);height:52px}
+.qb{width:44px;height:100%;border:none;background:#fff;cursor:pointer;font-size:1.2rem;color:var(--t2);display:flex;align-items:center;justify-content:center;transition:all .2s}
+.qb:hover{background:var(--navy);color:#fff}
+.qn{width:44px;text-align:center;font-size:0.95rem;font-weight:700}
+.add-btn{flex:1;height:52px;background:var(--navy);color:#fff;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;transition:background .2s;min-width:200px;display:flex;align-items:center;justify-content:center;gap:8px}
+.add-btn:hover{background:var(--navy2)}
+.add-btn.added{background:var(--green)}
+.buy-btn{width:100%;height:52px;background:var(--gold);color:var(--navy2);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:1.5rem}
+.buy-btn:hover{background:var(--gold2)}
+
+/* TRUST */
+.trust-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
+.trust-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 8px;border:1px solid var(--border);text-align:center;background:var(--off)}
+.trust-item .ti{font-size:1.3rem}
+.trust-item strong{font-size:0.68rem;font-weight:700;color:var(--t2)}
+.trust-item span{font-size:0.62rem;color:var(--t4);line-height:1.4}
+
+/* SUPPLIER LINK */
+.supplier-btn{display:flex;align-items:center;gap:8px;background:none;border:1.5px solid var(--border);padding:10px 18px;font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:600;color:var(--t2);cursor:pointer;transition:all .2s;text-decoration:none;width:100%;justify-content:center;margin-bottom:1rem}
+.supplier-btn:hover{border-color:var(--navy);color:var(--navy)}
+
+/* RELATED */
+.section{max-width:1400px;margin:0 auto;padding:3rem 2rem}
+.sec-head{margin-bottom:1.5rem}
+.sec-label{font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold3);font-weight:500;margin-bottom:6px}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.5rem,2.2vw,2rem);font-weight:400;color:var(--t1)}
+.sec-title em{font-style:italic}
+.related-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem}
+.rc{cursor:pointer}
+.rc-img{aspect-ratio:3/4;background:var(--off);display:flex;align-items:center;justify-content:center;margin-bottom:10px;border:1px solid var(--border);overflow:hidden}
+.rc-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.rc-img-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;background:linear-gradient(135deg,var(--navy),var(--navy2));color:rgba(255,255,255,0.2)}
+.rc:hover .rc-img img,.rc:hover .rc-img-ph{transform:scale(1.05)}
+.rc-cat{font-size:0.62rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--t4);margin-bottom:4px}
+.rc-name{font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:var(--t1);margin-bottom:5px;line-height:1.3}
+.rc-price{font-size:0.88rem;font-weight:700;color:var(--t1)}
+
+/* CART DRAWER */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:1000;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.on{opacity:1;pointer-events:all}
+.cart-d{position:fixed;top:0;right:-460px;bottom:0;width:460px;background:#fff;z-index:1001;transition:right .4s cubic-bezier(.25,.46,.45,.94);display:flex;flex-direction:column;box-shadow:-4px 0 30px rgba(0,0,0,0.12)}
+.cart-d.on{right:0}
+.cd-head{padding:1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.cd-head h2{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400}
+.cd-close{background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--t3);width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .2s}
+.cd-close:hover{background:var(--off)}
+.cd-items{flex:1;overflow-y:auto;padding:1rem 1.5rem}
+.cd-empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;color:var(--t4);text-align:center}
+.ci{display:flex;gap:1rem;padding:1rem 0;border-bottom:1px solid var(--border)}
+.ci-img{width:76px;height:96px;flex-shrink:0;border:1px solid var(--border);background:var(--off);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.ci-img img{width:100%;height:100%;object-fit:cover}
+.ci-info{flex:1}
+.ci-name{font-size:0.9rem;font-weight:500;margin-bottom:4px;line-height:1.3}
+.ci-price{font-size:0.85rem;font-weight:700;margin-bottom:8px}
+.ci-row{display:flex;align-items:center;gap:12px}
+.qty-wrap2{display:flex;align-items:center;border:1.5px solid var(--border)}
+.qb2{width:28px;height:28px;border:none;background:none;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.qb2:hover{background:var(--navy);color:#fff}
+.qn2{width:28px;text-align:center;font-size:0.82rem;font-weight:700}
+.ci-rm{background:none;border:none;cursor:pointer;font-size:0.68rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--t4);transition:color .2s}
+.ci-rm:hover{color:var(--red)}
+.cd-foot{padding:1.25rem 1.5rem;border-top:1px solid var(--border)}
+.cd-sub{display:flex;justify-content:space-between;font-size:0.88rem;font-weight:700;margin-bottom:6px}
+.cd-note{font-size:0.7rem;color:var(--t4);margin-bottom:1.25rem;line-height:1.5}
+.cd-co{width:100%;background:var(--navy);color:#fff;border:none;padding:15px;font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;margin-bottom:8px;transition:background .2s}
+.cd-co:hover{background:var(--navy2)}
+.cd-cn{width:100%;background:none;border:1.5px solid var(--border);color:var(--t2);padding:12px;font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.cd-cn:hover{border-color:var(--navy);color:var(--navy)}
+
+/* STICKY BAR */
+.sticky-bar{position:fixed;bottom:-80px;left:0;right:0;z-index:500;background:#fff;border-top:2px solid var(--border);padding:14px 2rem;display:flex;align-items:center;justify-content:space-between;gap:1.5rem;box-shadow:0 -4px 20px rgba(0,0,0,0.1);transition:bottom .4s}
+.sticky-bar.visible{bottom:0}
+.sb-info{display:flex;align-items:center;gap:12px}
+.sb-name{font-size:0.9rem;font-weight:700}
+.sb-price{font-size:0.85rem;color:var(--t3)}
+.sb-add{background:var(--navy);color:#fff;border:none;padding:12px 32px;font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:background .2s}
+.sb-add:hover{background:var(--navy2)}
+
+/* FOOTER */
+footer{background:var(--navy2);padding:3rem 0 2rem;margin-top:4rem}
+.ft-inner{max-width:1400px;margin:0 auto;padding:0 2rem}
+.ft-bot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.08)}
+.ft-bot p{font-size:0.7rem;color:rgba(255,255,255,0.4)}
+.pay-row{display:flex;gap:8px}
+.pay-b{background:rgba(255,255,255,0.07);padding:5px 12px;font-size:0.62rem;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase}
+
+@media(max-width:900px){.product-main{grid-template-columns:1fr;gap:2rem}.gallery{position:static}.related-grid{grid-template-columns:repeat(2,1fr)}.nav-cats{display:none}.cart-d{width:100%;right:-100%}}
+@media(max-width:600px){.trust-row{grid-template-columns:1fr 1fr}.related-grid{grid-template-columns:repeat(2,1fr)}.qty-add{flex-direction:column}.add-btn{min-width:unset;width:100%}.product-main{padding:1.5rem 1rem}}
+
+/* TOPBAR */
+.topbar{background:var(--navy2);padding:8px 0;text-align:center;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.75)}
+.topbar strong{color:var(--gold2)}
+/* HAMBURGER */
+.nav-hamburger{background:none;border:none;cursor:pointer;padding:6px;display:none;flex-direction:column;gap:5px;flex-shrink:0}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--t1);border-radius:2px;transition:all .3s}
+.nav-hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.nav-hamburger.open span:nth-child(2){opacity:0}
+.nav-hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+/* MOBILE DRAWER */
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:998}
+.mob-overlay.on{display:block}
+.mob-drawer{position:fixed;top:0;left:-300px;bottom:0;width:300px;background:#fff;z-index:999;transition:left .3s;overflow-y:auto;box-shadow:4px 0 30px rgba(0,0,0,0.15)}
+.mob-drawer.on{left:0}
+.mob-head{padding:1.25rem 1.5rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.mob-close{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--t3);line-height:1}
+.mob-nav a{display:flex;align-items:center;gap:12px;padding:14px 1.5rem;font-size:0.9rem;font-weight:500;color:var(--t2);text-decoration:none;border-bottom:1px solid rgba(0,0,0,0.05);transition:background .2s}
+.mob-nav a:hover{background:var(--off);color:var(--navy)}
+/* NAV RESPONSIVE */
+@media(max-width:900px){
+  .nav-hamburger{display:flex!important}
+  .nav-cats{display:none!important}
+  .nav-logo{flex:1!important;text-align:center!important}
+}
+@media(max-width:600px){
+  .nav-inner{padding:0 1rem!important}
+  .product-main{grid-template-columns:1fr!important;gap:2rem!important;padding:1.5rem 1rem!important}
+  .gallery{position:static!important}
+  .trust-row{grid-template-columns:1fr 1fr!important}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">&#128666; <strong>Free worldwide shipping</strong> on all orders &middot; Secure PayPal &middot; 30-day returns</div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo gold-text">Quravio</a>
+    <div class="nav-cats">
+      <a href="index.html">Home</a>
+      <a href="quravio-shop.html">All Products</a>
+      <a href="quravio-about.html">About</a>
+      <a href="quravio-contact.html">Contact</a>
+    </div>
+    <div class="nav-right">
+      <button class="icon-btn" onclick="toggleCart()">
+        &#128722;<span class="cart-count" id="cartBadge">0</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="breadcrumb-bar">
+  <div class="bc-inner">
+    <a href="index.html">Home</a><span class="bc-sep">/</span>
+    <a href="quravio-shop.html">Shop</a><span class="bc-sep">/</span>
+    <span class="cur" id="bc-name">Product</span>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div id="loading-screen" class="loading-screen">
+  <div class="spin"></div>
+  <p style="color:var(--t4);font-size:0.88rem">Loading product...</p>
+</div>
+
+<!-- PRODUCT (hidden until loaded) -->
+<div id="product-main" class="product-main" style="display:none">
+
+  <!-- GALLERY -->
+  <div class="gallery">
+    <div class="gallery-main" id="galleryMain">
+      <div id="mainImgWrap"></div>
+      <div id="saleBadge" style="display:none" class="gallery-badge">SALE</div>
+      <div class="gallery-nav">
+        <button class="gnav" onclick="prevImg()">&#8249;</button>
+        <button class="gnav" onclick="nextImg()">&#8250;</button>
+      </div>
+    </div>
+    <div class="thumbs" id="thumbs"></div>
+  </div>
+
+  <!-- INFO -->
+  <div class="pinfo">
+    <div class="pi-cat" id="pi-cat"></div>
+    <h1 class="pi-name" id="pi-name"></h1>
+
+    <div class="price-block">
+      <div class="pb-row" id="price-row"></div>
+      <div id="save-row"></div>
+    </div>
+
+    <div class="desc-block" id="pi-desc"></div>
+
+    <div class="meta-row" id="pi-meta"></div>
+
+    <div class="qty-add">
+      <div class="qty-wrap">
+        <button class="qb" onclick="chQty(-1)">&#8722;</button>
+        <span class="qn" id="qty">1</span>
+        <button class="qb" onclick="chQty(1)">+</button>
+      </div>
+      <button class="add-btn" id="addBtn" onclick="addToCartNow()">&#128722; Add to Cart</button>
+    </div>
+    <button class="buy-btn" onclick="buyNow()">&#9889; Buy It Now</button>
+
+    <div class="trust-row">
+      <div class="trust-item"><span class="ti" id="c-trust1Icon">&#128666;</span><strong id="c-trust1Title">Free Shipping</strong><span id="c-trust1Sub">Worldwide delivery</span></div>
+      <div class="trust-item"><span class="ti" id="c-trust2Icon">&#8617;&#65039;</span><strong id="c-trust2Title">30-Day Returns</strong><span id="c-trust2Sub">Hassle-free</span></div>
+      <div class="trust-item"><span class="ti" id="c-trust3Icon">&#128274;</span><strong id="c-trust3Title">Secure Pay</strong><span id="c-trust3Sub">PayPal protected</span></div>
+    </div>
+
+    <a id="supplier-link" class="supplier-btn" href="#" target="_blank" style="display:none">
+      &#128279; View on Supplier Website
+    </a>
+
+    <button class="supplier-btn" onclick="window.history.back()">
+      &#8592; Back to Shop
+    </button>
+  </div>
+</div>
+
+<!-- ERROR -->
+<div id="error-screen" style="display:none;max-width:1400px;margin:0 auto;padding:5rem 2rem;text-align:center">
+  <div style="font-size:3rem;margin-bottom:1rem">&#9888;&#65039;</div>
+  <h2 style="font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--navy);margin-bottom:8px">Product Not Found</h2>
+  <p style="color:var(--t4);margin-bottom:1.5rem">This product may have been removed or the link is incorrect.</p>
+  <a href="quravio-shop.html" style="background:var(--navy);color:#fff;padding:12px 28px;font-size:0.75rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;display:inline-block">Browse All Products</a>
+</div>
+
+<!-- RELATED -->
+<div id="related-section" class="section" style="display:none;background:var(--off)">
+  <div class="sec-head">
+    <div class="sec-label">You May Also Like</div>
+    <h2 class="sec-title">Related <em>Products</em></h2>
+  </div>
+  <div class="related-grid" id="relatedGrid"></div>
+</div>
+
+<!-- STICKY BAR -->
+<div class="sticky-bar" id="stickyBar">
+  <div class="sb-info">
+    <div>
+      <div class="sb-name" id="sb-name">Loading...</div>
+      <div class="sb-price" id="sb-price"></div>
+    </div>
+  </div>
+  <button class="sb-add" onclick="addToCartNow()">Add to Cart</button>
+</div>
+
+<!-- CART -->
+<div class="overlay" id="ovl" onclick="toggleCart()"></div>
+<div class="cart-d" id="cartD">
+  <div class="cd-head">
+    <h2>Cart <span id="cartCount" style="font-size:0.85rem;color:var(--t4);font-family:'DM Sans',sans-serif">(0)</span></h2>
+    <button class="cd-close" onclick="toggleCart()">&#10005;</button>
+  </div>
+  <div class="cd-items" id="cdItems">
+    <div class="cd-empty">
+      <div style="font-size:3rem">&#128722;</div>
+      <p style="font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase">Cart is empty</p>
+    </div>
+  </div>
+  <div class="cd-foot" id="cdFoot" style="display:none">
+    <div class="cd-sub"><span>Subtotal</span><span id="cdTotal">$0.00</span></div>
+    <p class="cd-note">Free shipping &middot; PayPal buyer protection</p>
+    <button class="cd-co" onclick="window.location.href='quravio-checkout.html'">&#128274; Checkout Securely</button>
+    <button class="cd-cn" onclick="toggleCart()">Continue Shopping</button>
+  </div>
+</div>
+
+<footer>
+  <div class="ft-inner">
+    <div class="ft-bot">
+      <p id="c-footerCopy">&copy; 2025 Quravio &mdash; All rights reserved.</p>
+      <div class="pay-row">
+        <span class="pay-b">PayPal</span>
+        <span class="pay-b">Visa</span>
+        <span class="pay-b">Mastercard</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { getFirestore, doc, getDoc, collection, getDocs, query, where, limit }
+  from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyAbE76HZVyfiVw0SyHNzpAxRCeb_uLCW7Y",
+  authDomain: "quravio-store.firebaseapp.com",
+  projectId: "quravio-store",
+  storageBucket: "quravio-store.firebasestorage.app",
+  messagingSenderId: "1066738660513",
+  appId: "1:1066738660513:web:c7b54e111802d6fff5ece0"
+});
+const db = getFirestore(app);
+
+let product = null;
+let imgIndex = 0;
+let qty = 1;
+let cart = JSON.parse(localStorage.getItem('qcart') || '[]');
+
+// ── LOAD PRODUCT ──────────────────────────────────
+async function loadProduct() {
+  const id = localStorage.getItem('qproduct');
+
+  if (!id) {
+    showError();
+    return;
+  }
+
+  try {
+    const snap = await getDoc(doc(db, 'products', id));
+    if (!snap.exists()) { showError(); return; }
+
+    product = { id: snap.id, ...snap.data() };
+    renderProduct(product);
+    loadRelated(product.category, product.id);
+  } catch (e) {
+    showError();
+  }
+}
+
+function showError() {
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('error-screen').style.display = 'block';
+}
+
+function renderProduct(p) {
+  document.title = `Quravio — ${p.name}`;
+  document.getElementById('bc-name').textContent = p.name;
+  document.getElementById('sb-name').textContent = p.name;
+  document.getElementById('sb-price').textContent = `$${Number(p.price).toFixed(2)}`;
+
+  // Category
+  document.getElementById('pi-cat').textContent = p.category || 'Luxury Collection';
+
+  // Name
+  document.getElementById('pi-name').textContent = p.name;
+
+  // Price
+  const discount = p.comparePrice ? Math.round((1 - p.price / p.comparePrice) * 100) : 0;
+  document.getElementById('price-row').innerHTML = p.comparePrice
+    ? `<span class="p-now">$${Number(p.price).toFixed(2)}</span>
+       <span class="p-was">$${Number(p.comparePrice).toFixed(2)}</span>
+       <span class="p-off">${discount}% OFF</span>`
+    : `<span class="p-now">$${Number(p.price).toFixed(2)}</span>`;
+
+  if (p.comparePrice) {
+    const saved = (p.comparePrice - p.price).toFixed(2);
+    document.getElementById('save-row').innerHTML =
+      `<span class="p-save">&#10003; You save $${saved}</span>`;
+  }
+
+  // Sale badge
+  if (p.comparePrice) document.getElementById('saleBadge').style.display = 'block';
+
+  // Description
+  document.getElementById('pi-desc').textContent = p.description || '';
+
+  // Meta
+  let meta = '';
+  if (p.sku) meta += `<span><strong>SKU:</strong> ${p.sku}</span>`;
+  if (p.stock !== undefined) meta += `<span><strong>Stock:</strong> ${p.stock > 0 ? p.stock + ' available' : 'In Stock'}</span>`;
+  if (p.weight) meta += `<span><strong>Weight:</strong> ${p.weight}kg</span>`;
+  document.getElementById('pi-meta').innerHTML = meta;
+
+  // Supplier link
+  if (p.supplierUrl) {
+    const sl = document.getElementById('supplier-link');
+    sl.href = p.supplierUrl;
+    sl.style.display = 'flex';
+  }
+
+  // Gallery
+  buildGallery(p.images || []);
+
+  // Show product
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('product-main').style.display = 'grid';
+
+  // Sticky bar observer
+  const addArea = document.querySelector('.qty-add');
+  if (addArea) {
+    new IntersectionObserver(([e]) => {
+      document.getElementById('stickyBar').classList.toggle('visible', !e.isIntersecting);
+    }, { threshold: 0 }).observe(addArea);
+  }
+}
+
+// ── GALLERY ───────────────────────────────────────
+function buildGallery(images) {
+  const mainWrap = document.getElementById('mainImgWrap');
+  const thumbsEl = document.getElementById('thumbs');
+
+  if (!images.length) {
+    mainWrap.innerHTML = '<div class="gallery-placeholder">&#128247;</div>';
+    return;
+  }
+
+  function setImg(i) {
+    imgIndex = i;
+    mainWrap.innerHTML = `<img src="${images[i]}" alt="Product image" onclick="this.classList.toggle('zoomed')" onerror="this.parentElement.innerHTML='<div class=gallery-placeholder>&#128247;</div>'">`;
+    document.querySelectorAll('.thumb').forEach((t, ti) => t.classList.toggle('active', ti === i));
+  }
+
+  images.forEach((url, i) => {
+    const t = document.createElement('div');
+    t.className = 'thumb' + (i === 0 ? ' active' : '');
+    t.innerHTML = `<img src="${url}" onerror="this.parentElement.innerHTML='<div class=thumb-ph>&#128247;</div>'">`;
+    t.onclick = () => setImg(i);
+    thumbsEl.appendChild(t);
+  });
+
+  setImg(0);
+
+  window.nextImg = () => setImg((imgIndex + 1) % images.length);
+  window.prevImg = () => setImg((imgIndex - 1 + images.length) % images.length);
+}
+
+// ── QUANTITY ──────────────────────────────────────
+window.chQty = function(d) {
+  qty = Math.max(1, qty + d);
+  document.getElementById('qty').textContent = qty;
+};
+
+// ── CART ──────────────────────────────────────────
+window.addToCartNow = function() {
+  if (!product) return;
+  const ex = cart.find(x => x.id === product.id);
+  if (ex) ex.qty += qty;
+  else cart.push({
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    image: product.images && product.images[0] ? product.images[0] : null,
+    qty
+  });
+  localStorage.setItem('qcart', JSON.stringify(cart));
+  renderCart();
+  const btn = document.getElementById('addBtn');
+  btn.textContent = '&#10003; Added!';
+  btn.classList.add('added');
+  setTimeout(() => { btn.innerHTML = '&#128722; Add to Cart'; btn.classList.remove('added'); }, 1800);
+  toggleCart();
+};
+
+window.buyNow = function() {
+  if (!product) return;
+  addToCartNow();
+  window.location.href = 'quravio-checkout.html';
+};
+
+function renderCart() {
+  const count = cart.reduce((s, i) => s + i.qty, 0);
+  document.getElementById('cartBadge').textContent = count;
+  document.getElementById('cartCount').textContent = `(${count})`;
+  const body = document.getElementById('cdItems');
+  const foot = document.getElementById('cdFoot');
+
+  if (!cart.length) {
+    body.innerHTML = `<div class="cd-empty"><div style="font-size:3rem">&#128722;</div>
+      <p style="font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase">Cart is empty</p></div>`;
+    foot.style.display = 'none';
+    return;
+  }
+
+  body.innerHTML = cart.map(i => `
+    <div class="ci">
+      <div class="ci-img">
+        ${i.image ? `<img src="${i.image}" onerror="this.parentElement.innerHTML='&#128247;'">` : '&#128247;'}
+      </div>
+      <div class="ci-info">
+        <div class="ci-name">${i.name}</div>
+        <div class="ci-price">$${(i.price * i.qty).toFixed(2)}</div>
+        <div class="ci-row">
+          <div class="qty-wrap2">
+            <button class="qb2" onclick="qtyChange('${i.id}',-1)">&#8722;</button>
+            <span class="qn2">${i.qty}</span>
+            <button class="qb2" onclick="qtyChange('${i.id}',1)">+</button>
+          </div>
+          <button class="ci-rm" onclick="removeCart('${i.id}')">Remove</button>
+        </div>
+      </div>
+    </div>`).join('');
+
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  document.getElementById('cdTotal').textContent = '$' + total.toFixed(2);
+  foot.style.display = 'block';
+}
+
+window.qtyChange = function(id, d) {
+  const it = cart.find(x => x.id === id);
+  if (!it) return;
+  it.qty += d;
+  if (it.qty < 1) cart = cart.filter(x => x.id !== id);
+  localStorage.setItem('qcart', JSON.stringify(cart));
+  renderCart();
+};
+
+window.removeCart = function(id) {
+  cart = cart.filter(x => x.id !== id);
+  localStorage.setItem('qcart', JSON.stringify(cart));
+  renderCart();
+};
+
+window.toggleCart = function() {
+  document.getElementById('cartD').classList.toggle('on');
+  document.getElementById('ovl').classList.toggle('on');
+};
+
+// ── RELATED PRODUCTS ──────────────────────────────
+async function loadRelated(category, currentId) {
+  try {
+    const snap = await getDocs(
+      query(collection(db, 'products'),
+        where('status', '==', 'active'),
+        where('category', '==', category),
+        limit(5))
+    );
+    const related = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(p => p.id !== currentId)
+      .slice(0, 4);
+
+    if (!related.length) return;
+
+    document.getElementById('related-section').style.display = 'block';
+    document.getElementById('relatedGrid').innerHTML = related.map(p => {
+      const img = p.images && p.images[0]
+        ? `<img src="${p.images[0]}" style="width:100%;height:100%;object-fit:cover;transition:transform .4s" onerror="this.parentElement.innerHTML='<div class=rc-img-ph>&#128247;</div>'">`
+        : `<div class="rc-img-ph">&#128247;</div>`;
+      return `
+        <div class="rc" onclick="goProduct('${p.id}')">
+          <div class="rc-img">${img}</div>
+          <div class="rc-cat">${p.category || ''}</div>
+          <div class="rc-name">${p.name}</div>
+          <div class="rc-price">$${Number(p.price).toFixed(2)}
+            ${p.comparePrice ? `<s style="color:var(--t4);font-size:0.78rem;margin-left:4px">$${Number(p.comparePrice).toFixed(2)}</s>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+  } catch (e) { /* no related products — that's fine */ }
+}
+
+window.goProduct = function(id) {
+  localStorage.setItem('qproduct', id);
+  window.scrollTo(0, 0);
+  window.location.reload();
+};
+
+// ── APPLY CONTENT FROM ADMIN ─────────────────────
+async function applyContent() {
+  try {
+    const snap = await getDocs(query(collection(db,'settings'), where('key','==','content')));
+    if(snap.empty) return;
+    const d = snap.docs[0].data();
+    const set = (id,val) => {const el=document.getElementById(id);if(el&&val)el.innerHTML=val;};
+    set('c-siteName', d.siteName);
+    set('c-topbarText', d.topbarText);
+    set('c-footerCopy', d.footerCopy);
+    set('c-trust1Icon', d.trust1Icon); set('c-trust1Title', d.trust1Title); set('c-trust1Sub', d.trust1Sub);
+    set('c-trust2Icon', d.trust2Icon); set('c-trust2Title', d.trust2Title); set('c-trust2Sub', d.trust2Sub);
+    set('c-trust3Icon', d.trust3Icon); set('c-trust3Title', d.trust3Title); set('c-trust3Sub', d.trust3Sub);
+  } catch(e) {}
+}
+
+// ── INIT ──────────────────────────────────────────
+renderCart();
+applyContent();
+loadProduct();
+</script>
+
+<script>
+// ── MOBILE MENU ──
+window.openMob = function(){
+  document.getElementById('navHamburger').classList.add('open');
+  document.getElementById('mobDrawer').classList.add('on');
+  document.getElementById('mobOverlay').classList.add('on');
+  document.body.style.overflow='hidden';
+};
+window.closeMob = function(){
+  document.getElementById('navHamburger').classList.remove('open');
+  document.getElementById('mobDrawer').classList.remove('on');
+  document.getElementById('mobOverlay').classList.remove('on');
+  document.body.style.overflow='';
+};
+</script>
+</body>
+</html>
