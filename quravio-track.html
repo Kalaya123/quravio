@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quravio — Track Your Order</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A84C;--gold2:#E8C96A;--gold3:#8A6218;
+  --navy:#1B2A4A;--navy2:#0F1E36;--navy3:#2E4070;
+  --off:#F7F5F1;--border:rgba(0,0,0,0.1);
+  --t1:#111;--t2:#333;--t3:#555;--t4:#888;
+  --red:#D93025;--green:#1A7A4A;--green2:#eaf4ee;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--t1);overflow-x:hidden}
+.gold-text{background:linear-gradient(90deg,var(--gold3),var(--gold2),var(--gold),var(--gold2),var(--gold3));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gs 4s linear infinite}
+@keyframes gs{to{background-position:200% center}}
+
+/* TOPBAR */
+.topbar{background:var(--navy2);padding:8px 1rem;text-align:center;font-size:0.72rem;letter-spacing:0.1em;color:rgba(255,255,255,0.75)}
+.topbar strong{color:var(--gold2)}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:990;background:#fff;border-bottom:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.nav-inner{max-width:1400px;margin:0 auto;padding:0 1.25rem;height:64px;display:flex;align-items:center}
+.nav-hamburger{background:none;border:none;cursor:pointer;padding:6px;display:none;flex-direction:column;gap:5px;flex-shrink:0}
+.nav-hamburger span{display:block;width:22px;height:2px;background:var(--t1);border-radius:2px;transition:all .3s}
+.nav-hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.nav-hamburger.open span:nth-child(2){opacity:0}
+.nav-hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:600;letter-spacing:0.1em;text-decoration:none;padding:0 1.5rem 0 0;flex-shrink:0}
+.nav-cats{display:flex;align-items:center;flex:1;justify-content:center}
+.nav-cats a{padding:0 1rem;height:64px;display:flex;align-items:center;font-size:0.78rem;font-weight:500;color:var(--t2);text-decoration:none;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
+.nav-cats a:hover{color:var(--t1);border-color:var(--gold)}
+.nav-right{display:flex;align-items:center;margin-left:auto}
+.icon-btn{background:none;border:none;cursor:pointer;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;position:relative}
+.cart-count{position:absolute;top:4px;right:4px;background:var(--navy);color:#fff;font-size:0.55rem;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+
+/* MOBILE MENU */
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:998}
+.mob-overlay.on{display:block}
+.mob-drawer{position:fixed;top:0;left:-300px;bottom:0;width:300px;background:#fff;z-index:999;transition:left .3s;overflow-y:auto;box-shadow:4px 0 30px rgba(0,0,0,0.15)}
+.mob-drawer.on{left:0}
+.mob-head{padding:1.25rem 1.5rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.mob-close{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--t3);line-height:1}
+.mob-nav a{display:flex;align-items:center;gap:12px;padding:14px 1.5rem;font-size:0.9rem;font-weight:500;color:var(--t2);text-decoration:none;border-bottom:1px solid rgba(0,0,0,0.05)}
+.mob-nav a:hover{background:var(--off);color:var(--navy)}
+
+/* HERO */
+.hero{background:var(--navy2);padding:3.5rem 1.25rem 4.5rem;text-align:center}
+.eyebrow{font-size:0.68rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold2);margin-bottom:10px;font-weight:500}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4.5vw,3.2rem);font-weight:400;color:#fff;line-height:1.15;margin-bottom:10px}
+.hero h1 em{font-style:italic;color:var(--gold2)}
+.hero p{font-size:0.9rem;color:rgba(255,255,255,0.6);max-width:520px;margin:0 auto}
+
+/* CARDS */
+.wrap{max-width:760px;margin:-2.5rem auto 4rem;padding:0 1.25rem}
+.card{background:#fff;border:1px solid var(--border);padding:1.75rem;margin-bottom:1.25rem}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.fg{display:flex;flex-direction:column;gap:6px}
+.fg label{font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--t3)}
+.fg input{border:1.5px solid var(--border);padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;transition:border-color .2s;width:100%}
+.fg input:focus{border-color:var(--gold)}
+.go-btn{margin-top:1.25rem;width:100%;background:var(--navy);color:#fff;border:none;padding:15px;font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:background .2s}
+.go-btn:hover{background:var(--navy2)}
+.go-btn:disabled{opacity:.6;cursor:wait}
+.msg{display:none;margin-top:1rem;padding:12px 14px;font-size:0.82rem;line-height:1.6}
+.msg.err{display:block;background:#FEF2F2;border:1px solid #FECACA;color:#991B1B}
+.help{margin-top:1rem;font-size:0.78rem;color:var(--t3);text-align:center}
+.help a{color:var(--navy);font-weight:600}
+
+/* RESULT */
+#result{display:none}
+.res-head{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.res-num{font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--t4)}
+.res-num strong{display:block;font-size:1.05rem;letter-spacing:0.04em;color:var(--t1);margin-top:2px}
+.badge{display:inline-block;padding:5px 14px;border-radius:20px;font-size:0.72rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase}
+.b-pending,.b-processing{background:#FEF3C7;color:#B45309}
+.b-shipped{background:#EFF6FF;color:#1D4ED8}
+.b-delivered{background:var(--green2);color:var(--green)}
+.b-cancelled{background:#FEF2F2;color:var(--red)}
+
+/* TIMELINE */
+.timeline{display:flex;justify-content:space-between;position:relative;margin:0.5rem 0 2rem}
+.timeline::before{content:'';position:absolute;top:15px;left:12.5%;right:12.5%;height:3px;background:var(--border)}
+.tl-fill{position:absolute;top:15px;left:12.5%;height:3px;background:var(--green);width:0;transition:width .6s}
+.tl-step{position:relative;z-index:1;flex:1;text-align:center}
+.tl-dot{width:32px;height:32px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;background:#fff;border:3px solid var(--border);font-size:0.8rem;font-weight:700;color:var(--t4)}
+.tl-step.done .tl-dot{background:var(--green);border-color:var(--green);color:#fff}
+.tl-step.now .tl-dot{box-shadow:0 0 0 5px rgba(26,122,74,0.18)}
+.tl-lbl{font-size:0.72rem;font-weight:500;color:var(--t4)}
+.tl-step.done .tl-lbl{color:var(--t1);font-weight:700}
+
+/* SHIPMENT */
+.ship{background:var(--off);border:1px solid var(--border);padding:1.1rem 1.25rem;margin-bottom:1.5rem}
+.ship h3,.items h3{font-size:0.7rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold3);margin-bottom:10px}
+.ship-row{display:flex;justify-content:space-between;gap:1rem;font-size:0.85rem;padding:5px 0;flex-wrap:wrap}
+.ship-row span:first-child{color:var(--t3)}
+.ship-row strong{word-break:break-all}
+.ship-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.ship-btn{background:var(--navy);color:#fff;border:none;padding:11px 20px;font-family:'DM Sans',sans-serif;font-size:0.74rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;text-decoration:none;display:inline-block}
+.ship-btn.out{background:#fff;color:var(--t2);border:1.5px solid var(--border)}
+.ship-note{font-size:0.85rem;color:var(--t3);line-height:1.7}
+
+/* ITEMS */
+.item{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--border);font-size:0.85rem}
+.item-img{width:48px;height:58px;background:var(--off);border:1px solid var(--border);flex-shrink:0;overflow:hidden}
+.item-img img{width:100%;height:100%;object-fit:cover;display:block}
+.item-name{flex:1}
+.item-qty{color:var(--t3)}
+.meta{font-size:0.75rem;color:var(--t4);margin-top:1rem}
+
+/* FOOTER */
+footer{background:var(--navy2);padding:2rem 0}
+.ft-inner{max-width:1400px;margin:0 auto;padding:0 2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.ft-copy{font-size:0.7rem;color:rgba(255,255,255,0.4)}
+.ft-links a{font-size:0.72rem;color:rgba(255,255,255,0.45);text-decoration:none;margin-left:1.25rem}
+.ft-links a:hover{color:#fff}
+
+@media(max-width:900px){
+  .nav-hamburger{display:flex}
+  .nav-cats{display:none}
+  .nav-logo{flex:1;text-align:center;padding:0}
+}
+@media(max-width:600px){
+  .form-grid{grid-template-columns:1fr}
+  .card{padding:1.25rem}
+  .tl-lbl{font-size:0.64rem}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar"><span id="c-topbarText">&#128666; <strong>Free worldwide shipping</strong> on all orders &middot; Secure PayPal &middot; 30-day returns</span></div>
+
+<nav>
+  <div class="nav-inner">
+    <button class="nav-hamburger" id="navHamburger" onclick="openMob()"><span></span><span></span><span></span></button>
+    <a href="index.html" class="nav-logo gold-text" id="c-siteName">Quravio</a>
+    <div class="nav-cats">
+      <a href="index.html">Home</a>
+      <a href="quravio-shop.html">Shop</a>
+      <a href="quravio-about.html">About</a>
+      <a href="quravio-contact.html">Contact</a>
+    </div>
+    <div class="nav-right">
+      <button class="icon-btn" onclick="window.location.href='quravio-shop.html'">&#128722;<span class="cart-count" id="cartBadge">0</span></button>
+    </div>
+  </div>
+</nav>
+
+<div class="mob-overlay" id="mobOverlay" onclick="closeMob()"></div>
+<div class="mob-drawer" id="mobDrawer">
+  <div class="mob-head">
+    <span class="gold-text" style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;letter-spacing:0.1em">Quravio</span>
+    <button class="mob-close" onclick="closeMob()">&#10005;</button>
+  </div>
+  <div class="mob-nav">
+    <a href="index.html" onclick="closeMob()">&#127968; Home</a>
+    <a href="quravio-shop.html" onclick="closeMob()">&#128717; All Products</a>
+    <a href="quravio-about.html" onclick="closeMob()">&#8505;&#65039; About</a>
+    <a href="quravio-contact.html" onclick="closeMob()">&#128222; Contact</a>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="eyebrow" id="c-trackEyebrow">Order Tracking</div>
+  <h1 id="c-trackTitle">Track Your <em>Order</em></h1>
+  <p id="c-trackSub">Enter your order number and the email you used at checkout to see where your order is.</p>
+</div>
+
+<div class="wrap">
+  <div class="card">
+    <div class="form-grid">
+      <div class="fg"><label for="inOrder">Order number</label><input type="text" id="inOrder" placeholder="QUR-XXXXXXXXXX" autocomplete="off" autocapitalize="characters"></div>
+      <div class="fg"><label for="inEmail">Email address</label><input type="email" id="inEmail" placeholder="you@example.com" autocomplete="email"></div>
+    </div>
+    <button class="go-btn" id="goBtn" onclick="trackOrder()">Track Order</button>
+    <div class="msg" id="errMsg"></div>
+    <div class="help" id="rememberHint" style="display:none">We filled in your most recent order from this device. Just type your email.</div>
+    <div class="help" id="c-trackHelp">Can't find your order number? Check your order confirmation, or <a href="quravio-contact.html">contact us</a>.</div>
+  </div>
+
+  <div class="card" id="result"></div>
+</div>
+
+<footer>
+  <div class="ft-inner">
+    <p class="ft-copy" id="c-footerCopy">&copy; 2025 Quravio.com &mdash; All rights reserved.</p>
+    <div class="ft-links"><a href="index.html">Home</a><a href="quravio-shop.html">Shop</a><a href="quravio-contact.html">Contact</a></div>
+  </div>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import { getFirestore, doc, getDoc, collection, getDocs, query, where }
+  from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyAbE76HZVyfiVw0SyHNzpAxRCeb_uLCW7Y",
+  authDomain:"quravio-store.firebaseapp.com",
+  projectId:"quravio-store",
+  storageBucket:"quravio-store.firebasestorage.app",
+  messagingSenderId:"1066738660513",
+  appId:"1:1066738660513:web:c7b54e111802d6fff5ece0"
+});
+const db = getFirestore(app);
+
+// ── ADMIN-EDITABLE TEXT ───────────────────────────
+async function applyContent() {
+  try {
+    const snap = await getDocs(query(collection(db,'settings'), where('key','==','content')));
+    if (snap.empty) return;
+    const d = snap.docs[0].data();
+    const set = (id,val) => { const el=document.getElementById(id); if(el&&val) el.innerHTML=val; };
+    set('c-siteName', d.siteName);
+    set('c-topbarText', d.topbarText);
+    set('c-footerCopy', d.footerCopy);
+    set('c-trackEyebrow', d.trackEyebrow);
+    set('c-trackTitle', d.trackTitle);
+    set('c-trackSub', d.trackSub);
+    set('c-trackHelp', d.trackHelp);
+  } catch(e) {}
+}
+
+// ── HELPERS ───────────────────────────────────────
+async function sha256Hex(s) {
+  try {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+    return Array.from(new Uint8Array(buf), x => x.toString(16).padStart(2,'0')).join('');
+  } catch(e) { return ''; }
+}
+function el(tag, cls, text) {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text !== undefined) n.textContent = text;
+  return n;
+}
+function fmtDate(ts) {
+  try { const d = ts && ts.toDate ? ts.toDate() : null; return d ? d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}) : ''; }
+  catch(e) { return ''; }
+}
+function showErr(msg) {
+  const m = document.getElementById('errMsg');
+  m.textContent = msg; m.className = 'msg err';
+  document.getElementById('result').style.display = 'none';
+}
+const NOT_FOUND = "We couldn't find an order matching those details. Please check your order number and email and try again.";
+const STEPS = ['Order placed','Processing','Shipped','Delivered'];
+const STEP_OF = { pending:0, processing:1, shipped:2, delivered:3 };
+const LABEL_OF = { pending:'Order placed', processing:'Processing', shipped:'Shipped', delivered:'Delivered', cancelled:'Cancelled' };
+
+// ── TRACK ─────────────────────────────────────────
+window.trackOrder = async function() {
+  const btn = document.getElementById('goBtn');
+  const num = document.getElementById('inOrder').value.trim().toUpperCase().replace(/\s+/g,'');
+  const email = document.getElementById('inEmail').value.trim().toLowerCase();
+  document.getElementById('errMsg').className = 'msg';
+  if (!num || !email) { showErr('Please enter both your order number and your email address.'); return; }
+  if (!/^QUR-[A-Z0-9]{10}$/.test(num)) { showErr(NOT_FOUND); return; }
+
+  btn.disabled = true; btn.textContent = 'Looking up...';
+  try {
+    const snap = await getDoc(doc(db,'tracking',num));
+    const hash = await sha256Hex(email);
+    if (!snap.exists()) { showErr(NOT_FOUND); return; }
+    const d = snap.data();
+    if (!d.emailHash || d.emailHash !== hash) { showErr(NOT_FOUND); return; }
+    render(d);
+  } catch(e) {
+    showErr('Something went wrong while looking up your order. Please try again in a moment.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Track Order';
+  }
+};
+
+function render(d) {
+  const box = document.getElementById('result');
+  box.textContent = '';
+  const status = d.status || 'pending';
+
+  // header
+  const head = el('div','res-head');
+  const left = el('div','res-num','Order number');
+  left.appendChild(el('strong','',d.orderNumber || ''));
+  head.appendChild(left);
+  head.appendChild(el('span','badge b-'+status, LABEL_OF[status] || status));
+  box.appendChild(head);
+
+  if (status === 'cancelled') {
+    box.appendChild(el('p','ship-note','This order has been cancelled. If you think this is a mistake, please contact us.'));
+  } else {
+    // timeline
+    const cur = STEP_OF[status] ?? 0;
+    const tl = el('div','timeline');
+    const fill = el('div','tl-fill');
+    tl.appendChild(fill);
+    STEPS.forEach((label,i) => {
+      const s = el('div','tl-step' + (i <= cur ? ' done' : '') + (i === cur ? ' now' : ''));
+      s.appendChild(el('div','tl-dot', i <= cur ? '\u2713' : String(i+1)));
+      s.appendChild(el('div','tl-lbl', label));
+      tl.appendChild(s);
+    });
+    box.appendChild(tl);
+    requestAnimationFrame(() => { fill.style.width = (cur / (STEPS.length-1) * 75) + '%'; });
+
+    // shipment
+    const ship = el('div','ship');
+    ship.appendChild(el('h3','','Shipment'));
+    if (d.trackingNumber) {
+      if (d.carrier) { const r = el('div','ship-row'); r.appendChild(el('span','','Carrier')); r.appendChild(el('strong','',d.carrier)); ship.appendChild(r); }
+      const r2 = el('div','ship-row'); r2.appendChild(el('span','','Tracking number')); r2.appendChild(el('strong','',d.trackingNumber)); ship.appendChild(r2);
+      const act = el('div','ship-actions');
+      if (/^https?:\/\//i.test(d.trackingUrl || '')) {
+        const a = el('a','ship-btn','Track shipment');
+        a.href = d.trackingUrl; a.target = '_blank'; a.rel = 'noopener noreferrer';
+        act.appendChild(a);
+      }
+      const cp = el('button','ship-btn out','Copy number');
+      cp.onclick = () => { navigator.clipboard && navigator.clipboard.writeText(d.trackingNumber).then(() => { cp.textContent = 'Copied!'; setTimeout(() => cp.textContent = 'Copy number', 1500); }); };
+      act.appendChild(cp);
+      ship.appendChild(act);
+    } else if (status === 'shipped') {
+      ship.appendChild(el('p','ship-note','Your order is on its way. Tracking details will appear here shortly.'));
+    } else if (status === 'delivered') {
+      ship.appendChild(el('p','ship-note','Your order has been delivered. We hope you love it!'));
+    } else {
+      ship.appendChild(el('p','ship-note','Tracking details will appear here as soon as your order ships.'));
+    }
+    box.appendChild(ship);
+  }
+
+  // items
+  const items = el('div','items');
+  items.appendChild(el('h3','','Items in this order'));
+  (d.items || []).forEach(it => {
+    const row = el('div','item');
+    const im = el('div','item-img');
+    if (/^https?:\/\//i.test(it.image || '')) { const i = document.createElement('img'); i.src = it.image; i.alt = ''; im.appendChild(i); }
+    row.appendChild(im);
+    row.appendChild(el('div','item-name', it.name || 'Item'));
+    row.appendChild(el('div','item-qty', '\u00d7 ' + (it.qty || 1)));
+    items.appendChild(row);
+  });
+  box.appendChild(items);
+
+  const placed = fmtDate(d.createdAt), upd = fmtDate(d.updatedAt);
+  const meta = [placed && ('Placed on ' + placed), upd && ('Last updated ' + upd)].filter(Boolean).join(' \u00b7 ');
+  if (meta) box.appendChild(el('p','meta', meta));
+
+  box.style.display = 'block';
+  box.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ── MOBILE MENU + CART BADGE ──────────────────────
+window.openMob = () => { document.getElementById('navHamburger').classList.add('open'); document.getElementById('mobDrawer').classList.add('on'); document.getElementById('mobOverlay').classList.add('on'); document.body.style.overflow='hidden'; };
+window.closeMob = () => { document.getElementById('navHamburger').classList.remove('open'); document.getElementById('mobDrawer').classList.remove('on'); document.getElementById('mobOverlay').classList.remove('on'); document.body.style.overflow=''; };
+try {
+  const n = JSON.parse(localStorage.getItem('qcart')||'[]').reduce((s,i)=>s+(Number(i.qty)||0),0);
+  document.getElementById('cartBadge').textContent = n;
+} catch(e) {}
+
+// Enter key + prefill from ?order=
+['inOrder','inEmail'].forEach(id => document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') trackOrder(); }));
+let pre = new URLSearchParams(location.search).get('order');
+let remembered = false;
+if (!pre) { try { pre = localStorage.getItem('qlastorder'); remembered = !!pre; } catch(e) {} }
+if (pre) {
+  document.getElementById('inOrder').value = pre;
+  if (remembered) document.getElementById('rememberHint').style.display = 'block';
+  document.getElementById('inEmail').focus();
+}
+
+applyContent();
+</script>
+</body>
+</html>
